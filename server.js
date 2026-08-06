@@ -21,16 +21,12 @@ if (!DATABASE_URL) {
 }
 
 if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 6) {
-  console.error(
-    "ERRO: configure ADMIN_PASSWORD com pelo menos 6 caracteres."
-  );
+  console.error("ERRO: configure ADMIN_PASSWORD com pelo menos 6 caracteres.");
   process.exit(1);
 }
 
 if (!TOKEN_SECRET || TOKEN_SECRET.length < 24) {
-  console.error(
-    "ERRO: configure TOKEN_SECRET com pelo menos 24 caracteres."
-  );
+  console.error("ERRO: configure TOKEN_SECRET com pelo menos 24 caracteres.");
   process.exit(1);
 }
 
@@ -87,22 +83,19 @@ function createRateLimiter({ windowMs, max, message }) {
 const publicWriteLimiter = createRateLimiter({
   windowMs: 10 * 60 * 1000,
   max: 200,
-  message:
-    "Muitas tentativas neste aparelho/rede. Aguarde alguns minutos.",
+  message: "Muitas tentativas neste aparelho/rede. Aguarde alguns minutos.",
 });
 
 const presenceLimiter = createRateLimiter({
   windowMs: 10 * 60 * 1000,
   max: 30,
-  message:
-    "Muitas atualizações de localização. Aguarde alguns instantes.",
+  message: "Muitas atualizações de localização. Aguarde alguns instantes.",
 });
 
 const loginLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message:
-    "Muitas tentativas de acesso. Aguarde alguns minutos.",
+  message: "Muitas tentativas de acesso. Aguarde alguns minutos.",
 });
 
 function normalizePlate(value) {
@@ -150,6 +143,7 @@ function normalizeAccuracy(value) {
 
 function distanceMeters(lat1, lon1, lat2, lon2) {
   const earthRadius = 6_371_000;
+
   const toRadians = (degree) =>
     (degree * Math.PI) / 180;
 
@@ -248,8 +242,7 @@ function requireAdmin(req, res, next) {
 
   if (!verifyAdminToken(token)) {
     return res.status(401).json({
-      error:
-        "Sessão inválida ou expirada.",
+      error: "Sessão inválida ou expirada.",
     });
   }
 
@@ -406,8 +399,8 @@ function presenceSnapshot(
   }
 
   /*
-   * Localização antiga continua aparecendo
-   * no painel, mas não bloqueia a chamada.
+   * Localização antiga continua aparecendo,
+   * mas não bloqueia a chamada.
    */
   if (
     ageSeconds != null &&
@@ -768,7 +761,7 @@ app.get(
 
       res.json({
         ok: true,
-        version: "15.1.1",
+        version: "15.1.2",
       });
     } catch (error) {
       console.error(error);
@@ -1104,24 +1097,37 @@ app.post(
       }
 
       /*
-       * PRIMEIRO CÁLCULO DE POSIÇÃO:
-       * inclui aguardando, chamado e balança.
+       * Calcula a posição diretamente pelo ID.
+       * Isso evita o erro de posição 0.
        */
       const positionResult =
         await client.query(
           `
             SELECT
               COUNT(*)::int AS position
-            FROM queue_entries
-            WHERE status IN (
-              'aguardando',
-              'chamado',
-              'balanca'
-            )
-              AND arrival_time <= $1
+
+            FROM queue_entries q
+
+            CROSS JOIN queue_entries target
+
+            WHERE target.id = $1
+
+              AND q.status IN (
+                'aguardando',
+                'chamado',
+                'balanca'
+              )
+
+              AND (
+                q.arrival_time,
+                q.id
+              ) <= (
+                target.arrival_time,
+                target.id
+              )
           `,
           [
-            inserted.rows[0].arrival_time,
+            inserted.rows[0].id,
           ]
         );
 
@@ -1477,8 +1483,8 @@ app.get(
         ].includes(item.status)
       ) {
         /*
-         * SEGUNDO CÁLCULO DE POSIÇÃO:
-         * usado para atualizar o aplicativo.
+         * Atualiza a posição pelo ID.
+         * Mantém o mesmo cálculo do cadastro.
          */
         const positionResult =
           await pool.query(
@@ -1486,17 +1492,27 @@ app.get(
               SELECT
                 COUNT(*)::int AS position
 
-              FROM queue_entries
+              FROM queue_entries q
 
-              WHERE status IN (
-                'aguardando',
-                'chamado',
-                'balanca'
-              )
+              CROSS JOIN queue_entries target
 
-                AND arrival_time <= $1
+              WHERE target.id = $1
+
+                AND q.status IN (
+                  'aguardando',
+                  'chamado',
+                  'balanca'
+                )
+
+                AND (
+                  q.arrival_time,
+                  q.id
+                ) <= (
+                  target.arrival_time,
+                  target.id
+                )
             `,
-            [item.arrival_time]
+            [item.id]
           );
 
         position =
@@ -1757,10 +1773,14 @@ app.post(
 
       await audit(
         "DAILY_CODE_CHANGED",
-        { dailyCode }
+        {
+          dailyCode,
+        }
       );
 
-      res.json({ dailyCode });
+      res.json({
+        dailyCode,
+      });
     } catch (error) {
       next(error);
     }
@@ -1816,7 +1836,8 @@ app.get(
               ELSE 0
             END,
 
-            arrival_time ASC
+            arrival_time ASC,
+            id ASC
 
           LIMIT 500
         `
@@ -2240,7 +2261,7 @@ initDatabase()
       "0.0.0.0",
       () => {
         console.log(
-          `Fila de carregamento V15.1.1 iniciada na porta ${PORT}.`
+          `Fila de carregamento V15.1.2 iniciada na porta ${PORT}.`
         );
       }
     );
