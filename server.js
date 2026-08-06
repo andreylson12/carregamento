@@ -692,39 +692,18 @@ function presenceSnapshot(
     };
   }
 
-  if (
-    ageSeconds != null &&
-    ageSeconds >
-      PRESENCE_STALE_SECONDS
-  ) {
-    const minutes =
-      Math.max(
-        1,
-        Math.floor(
-          ageSeconds /
-            60
-        )
-      );
+ if (ageSeconds != null && ageSeconds > PRESENCE_STALE_SECONDS) {
+  const minutes = Math.max(1, Math.floor(ageSeconds / 60));
 
-    return {
-      ...base,
-
-      state:
-        "stale",
-
-      label:
-        "Localização antiga",
-
-      detail:
-        `Sem atualização há ${minutes} min.`,
-
-      canCall:
-        false,
-
-      blockReason:
-        `A localização deste caminhão não é atualizada há aproximadamente ${minutes} minuto(s).`,
-    };
-  }
+  return {
+    ...base,
+    state: "stale",
+    label: "Localização antiga",
+    detail: `Sem atualização há ${minutes} min.`,
+    canCall: true,
+    blockReason: null,
+  };
+}
 
   if (
     lastAccuracy !=
