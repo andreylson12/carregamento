@@ -1,4 +1,4 @@
-const CACHE_NAME = "fila-agrex-pwa-v14";
+const CACHE_NAME = "fila-agrex-pwa-v15";
 
 const APP_SHELL = [
   "/",
@@ -42,8 +42,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
 
   /*
-   * As APIs da fila sempre usam a internet e nunca
-   * são armazenadas no cache.
+   * As APIs sempre usam a internet e nunca entram no cache.
    */
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(fetch(request));
@@ -51,21 +50,18 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * Para a página principal, tenta buscar a versão
-   * mais recente. Caso esteja sem internet, abre a
-   * última versão salva.
+   * A navegação tenta buscar a versão mais recente.
+   * Sem internet, usa a última página salva.
    */
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const copia = response.clone();
+          const copy = response.clone();
 
           caches
             .open(CACHE_NAME)
-            .then((cache) =>
-              cache.put("/", copia)
-            );
+            .then((cache) => cache.put("/", copy));
 
           return response;
         })
@@ -76,23 +72,21 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * Ícones e arquivos estáticos usam o cache primeiro.
+   * Ícones e arquivos locais usam o cache primeiro.
    */
   if (url.origin === self.location.origin) {
     event.respondWith(
-      caches.match(request).then((salvo) => {
-        if (salvo) {
-          return salvo;
+      caches.match(request).then((saved) => {
+        if (saved) {
+          return saved;
         }
 
         return fetch(request).then((response) => {
-          const copia = response.clone();
+          const copy = response.clone();
 
           caches
             .open(CACHE_NAME)
-            .then((cache) =>
-              cache.put(request, copia)
-            );
+            .then((cache) => cache.put(request, copy));
 
           return response;
         });
