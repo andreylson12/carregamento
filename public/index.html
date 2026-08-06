@@ -275,6 +275,17 @@
       color: var(--blue);
     }
 
+    .ahead-count {
+      margin: 12px 0 4px;
+      padding: 12px;
+      font-size: 17px;
+      font-weight: 800;
+      color: #17467a;
+      background: #eaf3ff;
+      border: 1px solid #bfd8f4;
+      border-radius: 12px;
+    }
+
     .presence-ticket {
       padding: 11px;
       margin-top: 12px;
@@ -515,6 +526,7 @@
             <div id="position" class="number">--</div>
             <strong id="ticketPlate"></strong>
             <p id="ticketStatus" class="help"></p>
+            <div id="ticketAhead" class="ahead-count hidden"></div>
             <div id="ticketPresence" class="presence-ticket presence-pending">
               <strong>📍 Verificando presença...</strong>
               <div class="help">Aguarde a atualização da localização.</div>
@@ -1124,11 +1136,34 @@
       }
     };
 
+    function updateAheadCount(data) {
+      const box = $("ticketAhead");
+      const position = Number(data.position);
+
+      box.classList.add("hidden");
+      box.textContent = "";
+
+      if (data.status !== "aguardando" || !Number.isInteger(position) || position < 1) {
+        return;
+      }
+
+      if (position === 1) {
+        box.textContent = "Você é o próximo da fila. Fique atento à chamada no WhatsApp.";
+      } else if (position === 2) {
+        box.textContent = "Falta 1 caminhão na sua frente.";
+      } else {
+        box.textContent = `Faltam ${position - 1} caminhões na sua frente.`;
+      }
+
+      box.classList.remove("hidden");
+    }
+
     function showTicket(data) {
       $("ticket").classList.remove("hidden");
       $("position").textContent = data.position ?? "--";
       $("ticketPlate").textContent = data.plate;
       $("ticketStatus").textContent = `Situação: ${statusName(data.status)}.`;
+      updateAheadCount(data);
       updateTicketPresence(data.presence);
 
       if (!statusTimer) {
