@@ -761,7 +761,7 @@ app.get(
 
       res.json({
         ok: true,
-        version: "15.1.2",
+        version: "15.1.3",
       });
     } catch (error) {
       console.error(error);
@@ -1329,6 +1329,12 @@ app.post(
         )
       );
 
+      /*
+       * V15.1.3:
+       * tipos explícitos nos parâmetros.
+       * Corrige PostgreSQL 42P08:
+       * "inconsistent types deduced for parameter".
+       */
       const updatedResult =
         await client.query(
           `
@@ -1337,23 +1343,31 @@ app.post(
             SET
               last_presence_at = NOW(),
 
-              last_presence_latitude = $1,
+              last_presence_latitude =
+                $1::double precision,
 
-              last_presence_longitude = $2,
+              last_presence_longitude =
+                $2::double precision,
 
-              last_presence_distance_m = $3,
+              last_presence_distance_m =
+                $3::integer,
 
-              last_presence_accuracy_m = $4,
+              last_presence_accuracy_m =
+                $4::integer,
 
               outside_since = CASE
 
                 WHEN
-                  $4 IS NOT NULL
-                  AND $4 > $5
+                  $4::integer IS NOT NULL
+                  AND
+                  $4::integer >
+                  $5::integer
 
                 THEN outside_since
 
-                WHEN $3 > $6
+                WHEN
+                  $3::integer >
+                  $6::integer
 
                 THEN COALESCE(
                   outside_since,
@@ -1364,7 +1378,7 @@ app.post(
 
               END
 
-            WHERE id = $7
+            WHERE id = $7::uuid
 
             RETURNING *
           `,
@@ -2261,7 +2275,7 @@ initDatabase()
       "0.0.0.0",
       () => {
         console.log(
-          `Fila de carregamento V15.1.2 iniciada na porta ${PORT}.`
+          `Fila de carregamento V15.1.3 iniciada na porta ${PORT}.`
         );
       }
     );
