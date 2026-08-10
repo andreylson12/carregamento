@@ -21,12 +21,16 @@ if (!DATABASE_URL) {
 }
 
 if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 6) {
-  console.error("ERRO: configure ADMIN_PASSWORD com pelo menos 6 caracteres.");
+  console.error(
+    "ERRO: configure ADMIN_PASSWORD com pelo menos 6 caracteres."
+  );
   process.exit(1);
 }
 
 if (!TOKEN_SECRET || TOKEN_SECRET.length < 24) {
-  console.error("ERRO: configure TOKEN_SECRET com pelo menos 24 caracteres.");
+  console.error(
+    "ERRO: configure TOKEN_SECRET com pelo menos 24 caracteres."
+  );
   process.exit(1);
 }
 
@@ -44,225 +48,470 @@ app.disable("x-powered-by");
 app.use(express.json({ limit: "50kb" }));
 
 app.use((req, res, next) => {
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("Referrer-Policy", "same-origin");
-  res.setHeader("Permissions-Policy", "geolocation=(self)");
+  res.setHeader(
+    "X-Content-Type-Options",
+    "nosniff"
+  );
+
+  res.setHeader(
+    "X-Frame-Options",
+    "DENY"
+  );
+
+  res.setHeader(
+    "Referrer-Policy",
+    "same-origin"
+  );
+
+  res.setHeader(
+    "Permissions-Policy",
+    "geolocation=(self)"
+  );
+
   next();
 });
 
-function createRateLimiter({ windowMs, max, message }) {
+function createRateLimiter({
+  windowMs,
+  max,
+  message,
+}) {
   const hits = new Map();
 
   return (req, res, next) => {
-    const key = `${req.ip}:${req.path}`;
-    const now = Date.now();
-    const current = hits.get(key);
+    const key =
+      `${req.ip}:${req.path}`;
 
-    if (!current || current.resetAt <= now) {
-      hits.set(key, {
-        count: 1,
-        resetAt: now + windowMs,
-      });
+    const now =
+      Date.now();
+
+    const current =
+      hits.get(key);
+
+    if (
+      !current ||
+      current.resetAt <= now
+    ) {
+      hits.set(
+        key,
+        {
+          count: 1,
+          resetAt:
+            now + windowMs,
+        }
+      );
 
       return next();
     }
 
     current.count += 1;
 
-    if (current.count > max) {
-      return res.status(429).json({
-        error: message,
-      });
+    if (
+      current.count > max
+    ) {
+      return res
+        .status(429)
+        .json({
+          error:
+            message,
+        });
     }
 
     next();
   };
 }
 
-const publicWriteLimiter = createRateLimiter({
-  windowMs: 10 * 60 * 1000,
-  max: 200,
-  message: "Muitas tentativas neste aparelho/rede. Aguarde alguns minutos.",
-});
+const publicWriteLimiter =
+  createRateLimiter({
+    windowMs:
+      10 * 60 * 1000,
 
-const presenceLimiter = createRateLimiter({
-  windowMs: 10 * 60 * 1000,
-  max: 30,
-  message: "Muitas atualizações de localização. Aguarde alguns instantes.",
-});
+    max:
+      200,
 
-const loginLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: "Muitas tentativas de acesso. Aguarde alguns minutos.",
-});
+    message:
+      "Muitas tentativas neste aparelho/rede. Aguarde alguns minutos.",
+  });
 
-function normalizePlate(value) {
-  return String(value || "")
+const presenceLimiter =
+  createRateLimiter({
+    windowMs:
+      10 * 60 * 1000,
+
+    max:
+      30,
+
+    message:
+      "Muitas atualizações de localização. Aguarde alguns instantes.",
+  });
+
+const loginLimiter =
+  createRateLimiter({
+    windowMs:
+      15 * 60 * 1000,
+
+    max:
+      10,
+
+    message:
+      "Muitas tentativas de acesso. Aguarde alguns minutos.",
+  });
+
+function normalizePlate(
+  value
+) {
+  return String(
+    value || ""
+  )
     .toUpperCase()
-    .replace(/[^A-Z0-9]/g, "")
-    .slice(0, 7);
+    .replace(
+      /[^A-Z0-9]/g,
+      ""
+    )
+    .slice(
+      0,
+      7
+    );
 }
 
-function isValidPlate(plate) {
-  return /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(plate);
+function isValidPlate(
+  plate
+) {
+  return /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/
+    .test(
+      plate
+    );
 }
 
-function cleanText(value, maxLength) {
-  return String(value || "")
-    .replace(/[<>]/g, "")
-    .replace(/\s+/g, " ")
+function cleanText(
+  value,
+  maxLength
+) {
+  return String(
+    value || ""
+  )
+    .replace(
+      /[<>]/g,
+      ""
+    )
+    .replace(
+      /\s+/g,
+      " "
+    )
     .trim()
-    .slice(0, maxLength);
+    .slice(
+      0,
+      maxLength
+    );
 }
 
-function isFiniteCoordinate(value, min, max) {
-  const number = Number(value);
+function isFiniteCoordinate(
+  value,
+  min,
+  max
+) {
+  const number =
+    Number(
+      value
+    );
 
   return (
-    Number.isFinite(number) &&
+    Number.isFinite(
+      number
+    ) &&
     number >= min &&
     number <= max
   );
 }
 
-function normalizeAccuracy(value) {
-  const accuracy = Number(value);
+function normalizeAccuracy(
+  value
+) {
+  const accuracy =
+    Number(
+      value
+    );
 
   if (
-    !Number.isFinite(accuracy) ||
+    !Number.isFinite(
+      accuracy
+    ) ||
     accuracy < 0 ||
     accuracy > 5000
   ) {
     return null;
   }
 
-  return Math.round(accuracy);
+  return Math.round(
+    accuracy
+  );
 }
 
-function distanceMeters(lat1, lon1, lat2, lon2) {
-  const earthRadius = 6_371_000;
+function distanceMeters(
+  lat1,
+  lon1,
+  lat2,
+  lon2
+) {
+  const earthRadius =
+    6_371_000;
 
-  const toRadians = (degree) =>
-    (degree * Math.PI) / 180;
+  const toRadians =
+    (degree) =>
+      (
+        degree *
+        Math.PI
+      ) /
+      180;
 
-  const deltaLat = toRadians(lat2 - lat1);
-  const deltaLon = toRadians(lon2 - lon1);
+  const deltaLat =
+    toRadians(
+      lat2 - lat1
+    );
+
+  const deltaLon =
+    toRadians(
+      lon2 - lon1
+    );
 
   const a =
-    Math.sin(deltaLat / 2) ** 2 +
-    Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(deltaLon / 2) ** 2;
+    Math.sin(
+      deltaLat / 2
+    ) ** 2 +
+
+    Math.cos(
+      toRadians(
+        lat1
+      )
+    ) *
+
+    Math.cos(
+      toRadians(
+        lat2
+      )
+    ) *
+
+    Math.sin(
+      deltaLon / 2
+    ) ** 2;
 
   return (
     earthRadius *
     2 *
     Math.atan2(
-      Math.sqrt(a),
-      Math.sqrt(1 - a)
+      Math.sqrt(
+        a
+      ),
+      Math.sqrt(
+        1 - a
+      )
     )
   );
 }
 
-function safeCompare(a, b) {
-  const left = Buffer.from(String(a));
-  const right = Buffer.from(String(b));
+function safeCompare(
+  a,
+  b
+) {
+  const left =
+    Buffer.from(
+      String(a)
+    );
+
+  const right =
+    Buffer.from(
+      String(b)
+    );
 
   return (
-    left.length === right.length &&
-    crypto.timingSafeEqual(left, right)
+    left.length ===
+      right.length &&
+
+    crypto.timingSafeEqual(
+      left,
+      right
+    )
   );
 }
 
 function createAdminToken() {
-  const payload = JSON.stringify({
-    exp:
-      Date.now() +
-      12 * 60 * 60 * 1000,
+  const payload =
+    JSON.stringify({
+      exp:
+        Date.now() +
+        12 *
+          60 *
+          60 *
+          1000,
 
-    nonce:
-      crypto
-        .randomBytes(16)
-        .toString("hex"),
-  });
+      nonce:
+        crypto
+          .randomBytes(
+            16
+          )
+          .toString(
+            "hex"
+          ),
+    });
 
-  const encoded = Buffer.from(payload).toString(
-    "base64url"
-  );
+  const encoded =
+    Buffer
+      .from(
+        payload
+      )
+      .toString(
+        "base64url"
+      );
 
-  const signature = crypto
-    .createHmac("sha256", TOKEN_SECRET)
-    .update(encoded)
-    .digest("base64url");
+  const signature =
+    crypto
+      .createHmac(
+        "sha256",
+        TOKEN_SECRET
+      )
+      .update(
+        encoded
+      )
+      .digest(
+        "base64url"
+      );
 
   return `${encoded}.${signature}`;
 }
 
-function verifyAdminToken(token) {
+function verifyAdminToken(
+  token
+) {
   try {
-    const [encoded, signature] = String(
-      token || ""
-    ).split(".");
+    const [
+      encoded,
+      signature,
+    ] =
+      String(
+        token || ""
+      ).split(
+        "."
+      );
 
-    if (!encoded || !signature) {
+    if (
+      !encoded ||
+      !signature
+    ) {
       return false;
     }
 
-    const expected = crypto
-      .createHmac("sha256", TOKEN_SECRET)
-      .update(encoded)
-      .digest("base64url");
+    const expected =
+      crypto
+        .createHmac(
+          "sha256",
+          TOKEN_SECRET
+        )
+        .update(
+          encoded
+        )
+        .digest(
+          "base64url"
+        );
 
-    if (!safeCompare(signature, expected)) {
+    if (
+      !safeCompare(
+        signature,
+        expected
+      )
+    ) {
       return false;
     }
 
-    const payload = JSON.parse(
-      Buffer.from(
-        encoded,
-        "base64url"
-      ).toString("utf8")
+    const payload =
+      JSON.parse(
+        Buffer
+          .from(
+            encoded,
+            "base64url"
+          )
+          .toString(
+            "utf8"
+          )
+      );
+
+    return (
+      Number(
+        payload.exp
+      ) >
+      Date.now()
     );
 
-    return Number(payload.exp) > Date.now();
   } catch {
     return false;
   }
 }
 
-function requireAdmin(req, res, next) {
+function requireAdmin(
+  req,
+  res,
+  next
+) {
   const header =
-    req.headers.authorization || "";
+    req.headers
+      .authorization ||
+    "";
 
-  const token = header.startsWith("Bearer ")
-    ? header.slice(7)
-    : "";
+  const token =
+    header.startsWith(
+      "Bearer "
+    )
+      ? header.slice(
+          7
+        )
+      : "";
 
-  if (!verifyAdminToken(token)) {
-    return res.status(401).json({
-      error: "Sessão inválida ou expirada.",
-    });
+  if (
+    !verifyAdminToken(
+      token
+    )
+  ) {
+    return res
+      .status(401)
+      .json({
+        error:
+          "Sessão inválida ou expirada.",
+      });
   }
 
   next();
 }
 
-function elapsedSeconds(value, now = Date.now()) {
+function elapsedSeconds(
+  value,
+  now = Date.now()
+) {
   if (!value) {
     return null;
   }
 
-  const timestamp = new Date(value).getTime();
+  const timestamp =
+    new Date(
+      value
+    ).getTime();
 
-  if (!Number.isFinite(timestamp)) {
+  if (
+    !Number.isFinite(
+      timestamp
+    )
+  ) {
     return null;
   }
 
   return Math.max(
     0,
-    Math.floor((now - timestamp) / 1000)
+
+    Math.floor(
+      (
+        now -
+        timestamp
+      ) /
+      1000
+    )
   );
 }
 
@@ -271,57 +520,87 @@ function presenceSnapshot(
   radiusMeters,
   now = Date.now()
 ) {
-  const radius = Number(radiusMeters);
+  const radius =
+    Number(
+      radiusMeters
+    );
 
   const lastDistance =
-    row.last_presence_distance_m == null
+    row
+      .last_presence_distance_m ==
+    null
       ? null
       : Number(
-          row.last_presence_distance_m
+          row
+            .last_presence_distance_m
         );
 
   const lastAccuracy =
-    row.last_presence_accuracy_m == null
+    row
+      .last_presence_accuracy_m ==
+    null
       ? null
       : Number(
-          row.last_presence_accuracy_m
+          row
+            .last_presence_accuracy_m
         );
 
-  const ageSeconds = elapsedSeconds(
-    row.last_presence_at,
-    now
-  );
+  const ageSeconds =
+    elapsedSeconds(
+      row.last_presence_at,
+      now
+    );
 
-  const outsideSeconds = elapsedSeconds(
-    row.outside_since,
-    now
-  );
+  const outsideSeconds =
+    elapsedSeconds(
+      row.outside_since,
+      now
+    );
 
   const base = {
-    required: Boolean(
-      row.presence_required
-    ),
+    required:
+      Boolean(
+        row
+          .presence_required
+      ),
 
-    state: "legacy",
-    label: "Cadastro anterior",
-    detail: "Sem verificação periódica.",
+    state:
+      "legacy",
 
-    canCall: true,
-    blockReason: null,
+    label:
+      "Cadastro anterior",
+
+    detail:
+      "Sem verificação periódica.",
+
+    canCall:
+      true,
+
+    blockReason:
+      null,
 
     lastSeenAt:
-      row.last_presence_at || null,
+      row
+        .last_presence_at ||
+      null,
 
     ageSeconds,
 
     outsideSince:
-      row.outside_since || null,
+      row
+        .outside_since ||
+      null,
 
     outsideSeconds,
 
-    distanceMeters: lastDistance,
-    accuracyMeters: lastAccuracy,
-    radiusMeters: radius,
+    distanceMeters:
+      lastDistance,
+
+    accuracyMeters:
+      lastAccuracy,
+
+    radiusMeters:
+      radius,
 
     intervalSeconds:
       PRESENCE_INTERVAL_SECONDS,
@@ -336,36 +615,50 @@ function presenceSnapshot(
       PRESENCE_MAX_ACCURACY_METERS,
   };
 
-  if (row.manual) {
+  if (
+    row.manual
+  ) {
     return {
       ...base,
 
-      state: "manual",
-      label: "Inclusão manual",
+      state:
+        "manual",
+
+      label:
+        "Inclusão manual",
 
       detail:
         "Presença confirmada pelo responsável.",
     };
   }
 
-  if (!row.presence_required) {
+  if (
+    !row
+      .presence_required
+  ) {
     return base;
   }
 
   if (
-    !row.last_presence_at ||
-    lastDistance == null
+    !row
+      .last_presence_at ||
+    lastDistance ==
+      null
   ) {
     return {
       ...base,
 
-      state: "pending",
-      label: "Aguardando GPS",
+      state:
+        "pending",
+
+      label:
+        "Aguardando GPS",
 
       detail:
         "O motorista precisa abrir o aplicativo.",
 
-      canCall: false,
+      canCall:
+        false,
 
       blockReason:
         "Ainda não há uma verificação recente da localização deste caminhão.",
@@ -373,25 +666,35 @@ function presenceSnapshot(
   }
 
   if (
-    outsideSeconds != null &&
+    outsideSeconds !=
+      null &&
     outsideSeconds >=
       PRESENCE_OUTSIDE_GRACE_SECONDS
   ) {
-    const minutes = Math.max(
-      1,
-      Math.floor(outsideSeconds / 60)
-    );
+    const minutes =
+      Math.max(
+        1,
+
+        Math.floor(
+          outsideSeconds /
+          60
+        )
+      );
 
     return {
       ...base,
 
-      state: "outside",
-      label: "Fora da unidade",
+      state:
+        "outside",
+
+      label:
+        "Fora da unidade",
 
       detail:
         `Fora do raio há ${minutes} min.`,
 
-      canCall: false,
+      canCall:
+        false,
 
       blockReason:
         `Este caminhão está fora da área permitida há aproximadamente ${minutes} minuto(s).`,
@@ -399,72 +702,104 @@ function presenceSnapshot(
   }
 
   /*
-   * Localização antiga continua aparecendo,
-   * mas não bloqueia a chamada.
+   * Localização antiga:
+   * continua aparecendo,
+   * mas NÃO bloqueia chamada.
    */
   if (
-    ageSeconds != null &&
-    ageSeconds > PRESENCE_STALE_SECONDS
+    ageSeconds !=
+      null &&
+    ageSeconds >
+      PRESENCE_STALE_SECONDS
   ) {
-    const minutes = Math.max(
-      1,
-      Math.floor(ageSeconds / 60)
-    );
+    const minutes =
+      Math.max(
+        1,
+
+        Math.floor(
+          ageSeconds /
+          60
+        )
+      );
 
     return {
       ...base,
 
-      state: "stale",
-      label: "Localização antiga",
+      state:
+        "stale",
+
+      label:
+        "Localização antiga",
 
       detail:
         `Sem atualização há ${minutes} min.`,
 
-      canCall: true,
-      blockReason: null,
+      canCall:
+        true,
+
+      blockReason:
+        null,
     };
   }
 
   if (
-    lastAccuracy != null &&
+    lastAccuracy !=
+      null &&
     lastAccuracy >
       PRESENCE_MAX_ACCURACY_METERS
   ) {
     return {
       ...base,
 
-      state: "inaccurate",
-      label: "GPS impreciso",
+      state:
+        "inaccurate",
+
+      label:
+        "GPS impreciso",
 
       detail:
         `Precisão aproximada: ${lastAccuracy} m.`,
 
-      canCall: false,
+      canCall:
+        false,
 
       blockReason:
         `A precisão atual do GPS é de aproximadamente ${lastAccuracy} metros.`,
     };
   }
 
-  if (lastDistance > radius) {
-    const remaining = Math.max(
-      0,
-      PRESENCE_OUTSIDE_GRACE_SECONDS -
-        (outsideSeconds || 0)
-    );
+  if (
+    lastDistance >
+    radius
+  ) {
+    const remaining =
+      Math.max(
+        0,
+
+        PRESENCE_OUTSIDE_GRACE_SECONDS -
+          (
+            outsideSeconds ||
+            0
+          )
+      );
 
     return {
       ...base,
 
-      state: "outside_grace",
-      label: "Fora do raio",
+      state:
+        "outside_grace",
+
+      label:
+        "Fora do raio",
 
       detail:
         `Distância atual: ${lastDistance} m. Tolerância: ${Math.ceil(
-          remaining / 60
+          remaining /
+          60
         )} min.`,
 
-      canCall: false,
+      canCall:
+        false,
 
       blockReason:
         `Este caminhão está fora do raio permitido. Distância aproximada: ${lastDistance} metros.`,
@@ -474,8 +809,11 @@ function presenceSnapshot(
   return {
     ...base,
 
-    state: "inside",
-    label: "Dentro da unidade",
+    state:
+      "inside",
+
+    label:
+      "Dentro da unidade",
 
     detail:
       `Distância atual: ${lastDistance} m.`,
@@ -500,27 +838,217 @@ async function audit(
     `,
     [
       action,
-      JSON.stringify(details),
+
+      JSON.stringify(
+        details
+      ),
     ]
   );
+}
+
+/*
+ * =========================================================
+ * FILA DE ESPERA DO MOTORISTA - V15.2
+ * =========================================================
+ *
+ * Aqui somente "aguardando" conta como posição.
+ *
+ * CHAMADO      = sai da posição
+ * BALANÇA      = sai da posição
+ * FINALIZADO   = sai da posição
+ *
+ * Também localiza as DUAS placas imediatamente à frente.
+ */
+async function getWaitingQueueInfo(
+  client,
+  queueId
+) {
+  const positionResult =
+    await client.query(
+      `
+        SELECT
+          COUNT(*)::int
+            AS position
+
+        FROM queue_entries q
+
+        CROSS JOIN
+          queue_entries target
+
+        WHERE
+          target.id = $1
+
+          AND
+          target.status =
+            'aguardando'
+
+          AND
+          q.status =
+            'aguardando'
+
+          AND (
+            q.arrival_time,
+            q.id
+          ) <= (
+            target.arrival_time,
+            target.id
+          )
+      `,
+      [
+        queueId,
+      ]
+    );
+
+  const rawPosition =
+    Number(
+      positionResult
+        .rows[0]
+        ?.position ||
+      0
+    );
+
+  if (
+    rawPosition < 1
+  ) {
+    return {
+      position:
+        null,
+
+      aheadPlates:
+        [],
+    };
+  }
+
+  const aheadResult =
+    await client.query(
+      `
+        WITH ranked AS (
+
+          SELECT
+            q.id,
+            q.plate,
+            q.arrival_time,
+
+            (
+              ROW_NUMBER()
+              OVER (
+                ORDER BY
+                  q.arrival_time ASC,
+                  q.id ASC
+              )
+            )::int
+              AS queue_position
+
+          FROM queue_entries q
+
+          WHERE
+            q.status =
+              'aguardando'
+        ),
+
+        target AS (
+
+          SELECT
+            id,
+            arrival_time
+
+          FROM queue_entries
+
+          WHERE
+            id = $1
+
+            AND
+            status =
+              'aguardando'
+        )
+
+        SELECT
+          nearest.plate,
+          nearest.queue_position
+
+        FROM (
+
+          SELECT
+            ranked.plate,
+            ranked.queue_position,
+            ranked.arrival_time,
+            ranked.id
+
+          FROM ranked
+
+          CROSS JOIN target
+
+          WHERE (
+            ranked.arrival_time,
+            ranked.id
+          ) < (
+            target.arrival_time,
+            target.id
+          )
+
+          ORDER BY
+            ranked.arrival_time DESC,
+            ranked.id DESC
+
+          LIMIT 2
+
+        ) nearest
+
+        ORDER BY
+          nearest.queue_position ASC
+      `,
+      [
+        queueId,
+      ]
+    );
+
+  return {
+    position:
+      rawPosition,
+
+    aheadPlates:
+      aheadResult
+        .rows
+        .map(
+          (row) => ({
+            plate:
+              row.plate,
+
+            position:
+              Number(
+                row
+                  .queue_position
+              ),
+          })
+        ),
+  };
 }
 
 async function initDatabase() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS settings (
-      id SMALLINT PRIMARY KEY CHECK (id = 1),
+      id SMALLINT
+        PRIMARY KEY
+        CHECK (id = 1),
 
-      unit_name VARCHAR(120) NOT NULL,
+      unit_name VARCHAR(120)
+        NOT NULL,
 
-      daily_code VARCHAR(12) NOT NULL,
+      daily_code VARCHAR(12)
+        NOT NULL,
 
-      latitude DOUBLE PRECISION NOT NULL,
+      latitude DOUBLE PRECISION
+        NOT NULL,
 
-      longitude DOUBLE PRECISION NOT NULL,
+      longitude DOUBLE PRECISION
+        NOT NULL,
 
-      radius_m INTEGER NOT NULL
+      radius_m INTEGER
+        NOT NULL
         CHECK (
-          radius_m BETWEEN 20 AND 10000
+          radius_m
+          BETWEEN 20
+          AND 10000
         ),
 
       block_device BOOLEAN
@@ -533,9 +1061,11 @@ async function initDatabase() {
     );
 
     CREATE TABLE IF NOT EXISTS queue_entries (
-      id UUID PRIMARY KEY,
+      id UUID
+        PRIMARY KEY,
 
-      plate VARCHAR(7) NOT NULL,
+      plate VARCHAR(7)
+        NOT NULL,
 
       driver_name VARCHAR(120)
         NOT NULL,
@@ -584,7 +1114,8 @@ async function initDatabase() {
 
     ALTER TABLE queue_entries
       ADD COLUMN IF NOT EXISTS
-      last_presence_at TIMESTAMPTZ;
+      last_presence_at
+      TIMESTAMPTZ;
 
     ALTER TABLE queue_entries
       ADD COLUMN IF NOT EXISTS
@@ -608,12 +1139,15 @@ async function initDatabase() {
 
     ALTER TABLE queue_entries
       ADD COLUMN IF NOT EXISTS
-      outside_since TIMESTAMPTZ;
+      outside_since
+      TIMESTAMPTZ;
 
     CREATE TABLE IF NOT EXISTS audit_logs (
-      id BIGSERIAL PRIMARY KEY,
+      id BIGSERIAL
+        PRIMARY KEY,
 
-      action VARCHAR(80) NOT NULL,
+      action VARCHAR(80)
+        NOT NULL,
 
       details JSONB
         NOT NULL
@@ -627,7 +1161,9 @@ async function initDatabase() {
     CREATE UNIQUE INDEX IF NOT EXISTS
       uq_queue_active_plate
 
-      ON queue_entries (plate)
+      ON queue_entries (
+        plate
+      )
 
       WHERE status IN (
         'aguardando',
@@ -659,51 +1195,71 @@ async function initDatabase() {
         last_presence_at
       )
 
-      WHERE status = 'aguardando';
+      WHERE
+        status =
+          'aguardando';
   `);
 
-  const existing = await pool.query(
-    `
-      SELECT id
-      FROM settings
-      WHERE id = 1
-    `
-  );
+  const existing =
+    await pool.query(
+      `
+        SELECT id
+        FROM settings
+        WHERE id = 1
+      `
+    );
 
-  if (existing.rowCount === 0) {
+  if (
+    existing.rowCount ===
+    0
+  ) {
     const initialCode =
       cleanText(
-        process.env.DAILY_CODE,
+        process.env
+          .DAILY_CODE,
         12
       ) ||
+
       String(
-        crypto.randomInt(
-          1000,
-          10000
+        crypto
+          .randomInt(
+            1000,
+            10000
+          )
+      );
+
+    const initialLat =
+      Number(
+        process.env
+          .UNIT_LAT ||
+        0
+      );
+
+    const initialLon =
+      Number(
+        process.env
+          .UNIT_LON ||
+        0
+      );
+
+    const initialRadius =
+      Math.max(
+        20,
+
+        Number(
+          process.env
+            .RADIUS_METERS ||
+          200
         )
       );
 
-    const initialLat = Number(
-      process.env.UNIT_LAT || 0
-    );
-
-    const initialLon = Number(
-      process.env.UNIT_LON || 0
-    );
-
-    const initialRadius = Math.max(
-      20,
-      Number(
-        process.env.RADIUS_METERS ||
-          200
-      )
-    );
-
     const blockDevice =
       String(
-        process.env.BLOCK_DEVICE ||
-          "true"
-      ).toLowerCase() !== "false";
+        process.env
+          .BLOCK_DEVICE ||
+        "true"
+      ).toLowerCase() !==
+      "false";
 
     await pool.query(
       `
@@ -728,22 +1284,29 @@ async function initDatabase() {
       `,
       [
         cleanText(
-          process.env.UNIT_NAME,
+          process.env
+            .UNIT_NAME,
           120
         ) ||
           "Unidade de Carregamento",
 
         initialCode,
 
-        Number.isFinite(initialLat)
+        Number.isFinite(
+          initialLat
+        )
           ? initialLat
           : 0,
 
-        Number.isFinite(initialLon)
+        Number.isFinite(
+          initialLon
+        )
           ? initialLon
           : 0,
 
-        Number.isFinite(initialRadius)
+        Number.isFinite(
+          initialRadius
+        )
           ? initialRadius
           : 200,
 
@@ -755,44 +1318,73 @@ async function initDatabase() {
 
 app.get(
   "/api/health",
-  async (_req, res) => {
+
+  async (
+    _req,
+    res
+  ) => {
     try {
-      await pool.query("SELECT 1");
+      await pool.query(
+        "SELECT 1"
+      );
 
       res.json({
-        ok: true,
-        version: "15.1.3",
-      });
-    } catch (error) {
-      console.error(error);
+        ok:
+          true,
 
-      res.status(503).json({
-        ok: false,
+        version:
+          "15.2.0",
       });
+
+    } catch (
+      error
+    ) {
+      console.error(
+        error
+      );
+
+      res
+        .status(503)
+        .json({
+          ok:
+            false,
+        });
     }
   }
 );
 
 app.get(
   "/api/public-config",
-  async (_req, res, next) => {
+
+  async (
+    _req,
+    res,
+    next
+  ) => {
     try {
-      const result = await pool.query(
-        `
-          SELECT
-            unit_name,
-            radius_m
-          FROM settings
-          WHERE id = 1
-        `
-      );
+      const result =
+        await pool.query(
+          `
+            SELECT
+              unit_name,
+              radius_m
+
+            FROM settings
+
+            WHERE id = 1
+          `
+        );
 
       res.json({
         unitName:
-          result.rows[0].unit_name,
+          result
+            .rows[0]
+            .unit_name,
 
         radiusMeters:
-          result.rows[0].radius_m,
+          result
+            .rows[0]
+            .radius_m,
 
         presenceIntervalSeconds:
           PRESENCE_INTERVAL_SECONDS,
@@ -806,87 +1398,140 @@ app.get(
         presenceMaxAccuracyMeters:
           PRESENCE_MAX_ACCURACY_METERS,
       });
-    } catch (error) {
-      next(error);
+
+    } catch (
+      error
+    ) {
+      next(
+        error
+      );
     }
   }
 );
 
 app.post(
   "/api/queue",
+
   publicWriteLimiter,
-  async (req, res, next) => {
-    const client = await pool.connect();
+
+  async (
+    req,
+    res,
+    next
+  ) => {
+    const client =
+      await pool.connect();
 
     try {
-      const plate = normalizePlate(
-        req.body.plate
-      );
+      const plate =
+        normalizePlate(
+          req.body
+            .plate
+        );
 
-      const driverName = cleanText(
-        req.body.driverName,
-        120
-      );
+      const driverName =
+        cleanText(
+          req.body
+            .driverName,
+          120
+        );
 
-      const carrier = cleanText(
-        req.body.carrier,
-        160
-      );
+      const carrier =
+        cleanText(
+          req.body
+            .carrier,
+          160
+        );
 
-      const dailyCode = cleanText(
-        req.body.dailyCode,
-        12
-      );
+      const dailyCode =
+        cleanText(
+          req.body
+            .dailyCode,
+          12
+        );
 
-      const deviceId = cleanText(
-        req.body.deviceId,
-        120
-      );
+      const deviceId =
+        cleanText(
+          req.body
+            .deviceId,
+          120
+        );
 
-      const latitude = Number(
-        req.body.latitude
-      );
+      const latitude =
+        Number(
+          req.body
+            .latitude
+        );
 
-      const longitude = Number(
-        req.body.longitude
-      );
+      const longitude =
+        Number(
+          req.body
+            .longitude
+        );
 
-      const accuracy = normalizeAccuracy(
-        req.body.accuracy
-      );
+      const accuracy =
+        normalizeAccuracy(
+          req.body
+            .accuracy
+        );
 
-      const presenceVersion = Number(
-        req.body.presenceVersion || 0
-      );
+      const presenceVersion =
+        Number(
+          req.body
+            .presenceVersion ||
+          0
+        );
 
       const presenceRequired =
-        presenceVersion >= 15;
+        presenceVersion >=
+        15;
 
-      if (!isValidPlate(plate)) {
-        return res.status(400).json({
-          error: "Placa inválida.",
-        });
+      if (
+        !isValidPlate(
+          plate
+        )
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Placa inválida.",
+          });
       }
 
-      if (driverName.length < 3) {
-        return res.status(400).json({
-          error:
-            "Informe o nome do motorista.",
-        });
+      if (
+        driverName.length <
+        3
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Informe o nome do motorista.",
+          });
       }
 
-      if (carrier.length < 2) {
-        return res.status(400).json({
-          error:
-            "Informe a transportadora.",
-        });
+      if (
+        carrier.length <
+        2
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Informe a transportadora.",
+          });
       }
 
-      if (!deviceId) {
-        return res.status(400).json({
-          error:
-            "Não foi possível identificar o aparelho.",
-        });
+      if (
+        !deviceId
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Não foi possível identificar o aparelho.",
+          });
       }
 
       if (
@@ -895,248 +1540,300 @@ app.post(
           -90,
           90
         ) ||
+
         !isFiniteCoordinate(
           longitude,
           -180,
           180
         )
       ) {
-        return res.status(400).json({
-          error: "Localização inválida.",
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Localização inválida.",
+          });
       }
 
-      await client.query("BEGIN");
+      await client.query(
+        "BEGIN"
+      );
 
       const settingsResult =
         await client.query(
           `
             SELECT *
+
             FROM settings
+
             WHERE id = 1
+
             FOR SHARE
           `
         );
 
       const settings =
-        settingsResult.rows[0];
+        settingsResult
+          .rows[0];
 
       if (
         !safeCompare(
           dailyCode,
-          settings.daily_code
+          settings
+            .daily_code
         )
       ) {
-        await client.query("ROLLBACK");
+        await client.query(
+          "ROLLBACK"
+        );
 
-        return res.status(403).json({
-          error:
-            "Código do dia incorreto.",
-        });
+        return res
+          .status(403)
+          .json({
+            error:
+              "Código do dia incorreto.",
+          });
       }
 
       if (
-        Number(settings.latitude) === 0 &&
-        Number(settings.longitude) === 0
-      ) {
-        await client.query("ROLLBACK");
+        Number(
+          settings
+            .latitude
+        ) === 0 &&
 
-        return res.status(503).json({
-          error:
-            "A localização da unidade ainda não foi configurada pelo responsável.",
-        });
+        Number(
+          settings
+            .longitude
+        ) === 0
+      ) {
+        await client.query(
+          "ROLLBACK"
+        );
+
+        return res
+          .status(503)
+          .json({
+            error:
+              "A localização da unidade ainda não foi configurada pelo responsável.",
+          });
       }
 
-      const distance = Math.round(
-        distanceMeters(
-          latitude,
-          longitude,
-          Number(settings.latitude),
-          Number(settings.longitude)
-        )
-      );
+      const distance =
+        Math.round(
+          distanceMeters(
+            latitude,
+            longitude,
+
+            Number(
+              settings
+                .latitude
+            ),
+
+            Number(
+              settings
+                .longitude
+            )
+          )
+        );
 
       if (
         distance >
-        Number(settings.radius_m)
+        Number(
+          settings
+            .radius_m
+        )
       ) {
-        await client.query("ROLLBACK");
+        await client.query(
+          "ROLLBACK"
+        );
 
-        return res.status(403).json({
-          error:
-            `Você está fora da área permitida. Distância aproximada: ${distance} m.`,
-        });
+        return res
+          .status(403)
+          .json({
+            error:
+              `Você está fora da área permitida. Distância aproximada: ${distance} m.`,
+          });
       }
 
-      if (settings.block_device) {
+      if (
+        settings
+          .block_device
+      ) {
         const deviceCheck =
           await client.query(
             `
               SELECT id
+
               FROM queue_entries
-              WHERE device_id = $1
+
+              WHERE
+                device_id = $1
+
                 AND status IN (
                   'aguardando',
                   'chamado',
                   'balanca'
                 )
+
               LIMIT 1
             `,
-            [deviceId]
+            [
+              deviceId,
+            ]
           );
 
-        if (deviceCheck.rowCount > 0) {
-          await client.query("ROLLBACK");
+        if (
+          deviceCheck
+            .rowCount >
+          0
+        ) {
+          await client.query(
+            "ROLLBACK"
+          );
 
-          return res.status(409).json({
-            error:
-              "Este aparelho já possui uma placa ativa na fila.",
-          });
+          return res
+            .status(409)
+            .json({
+              error:
+                "Este aparelho já possui uma placa ativa na fila.",
+            });
         }
       }
 
-      const id = crypto.randomUUID();
+      const id =
+        crypto
+          .randomUUID();
 
       let inserted;
 
       /*
-       * Cadastro V15 com presença.
+       * Cadastro V15
+       * com presença.
        */
-      if (presenceRequired) {
-        inserted = await client.query(
-          `
-            INSERT INTO queue_entries (
+      if (
+        presenceRequired
+      ) {
+        inserted =
+          await client.query(
+            `
+              INSERT INTO queue_entries (
+                id,
+                plate,
+                driver_name,
+                carrier,
+                distance_m,
+                latitude,
+                longitude,
+                device_id,
+                presence_required,
+                last_presence_at,
+                last_presence_latitude,
+                last_presence_longitude,
+                last_presence_distance_m,
+                last_presence_accuracy_m,
+                outside_since
+              )
+              VALUES (
+                $1,
+                $2,
+                $3,
+                $4,
+                $5,
+                $6,
+                $7,
+                $8,
+                TRUE,
+                NOW(),
+                $6,
+                $7,
+                $5,
+                $9::integer,
+                NULL
+              )
+              RETURNING *
+            `,
+            [
               id,
               plate,
-              driver_name,
+              driverName,
               carrier,
-              distance_m,
+              distance,
               latitude,
               longitude,
-              device_id,
-              presence_required,
-              last_presence_at,
-              last_presence_latitude,
-              last_presence_longitude,
-              last_presence_distance_m,
-              last_presence_accuracy_m,
-              outside_since
-            )
-            VALUES (
-              $1,
-              $2,
-              $3,
-              $4,
-              $5,
-              $6,
-              $7,
-              $8,
-              TRUE,
-              NOW(),
-              $6,
-              $7,
-              $5,
-              $9::integer,
-              NULL
-            )
-            RETURNING *
-          `,
-          [
-            id,
-            plate,
-            driverName,
-            carrier,
-            distance,
-            latitude,
-            longitude,
-            deviceId,
-            accuracy,
-          ]
-        );
+              deviceId,
+              accuracy,
+            ]
+          );
+
       } else {
         /*
-         * Compatibilidade com versões antigas.
+         * Compatibilidade
+         * com versões antigas.
          */
-        inserted = await client.query(
-          `
-            INSERT INTO queue_entries (
+        inserted =
+          await client.query(
+            `
+              INSERT INTO queue_entries (
+                id,
+                plate,
+                driver_name,
+                carrier,
+                distance_m,
+                latitude,
+                longitude,
+                device_id,
+                presence_required
+              )
+              VALUES (
+                $1,
+                $2,
+                $3,
+                $4,
+                $5,
+                $6,
+                $7,
+                $8,
+                FALSE
+              )
+              RETURNING *
+            `,
+            [
               id,
               plate,
-              driver_name,
+              driverName,
               carrier,
-              distance_m,
+              distance,
               latitude,
               longitude,
-              device_id,
-              presence_required
-            )
-            VALUES (
-              $1,
-              $2,
-              $3,
-              $4,
-              $5,
-              $6,
-              $7,
-              $8,
-              FALSE
-            )
-            RETURNING *
-          `,
-          [
-            id,
-            plate,
-            driverName,
-            carrier,
-            distance,
-            latitude,
-            longitude,
-            deviceId,
-          ]
-        );
+              deviceId,
+            ]
+          );
       }
 
       /*
-       * Calcula a posição diretamente pelo ID.
-       * Isso evita o erro de posição 0.
+       * V15.2
+       *
+       * A posição considera
+       * SOMENTE aguardando.
        */
-      const positionResult =
-        await client.query(
-          `
-            SELECT
-              COUNT(*)::int AS position
+      const queueInfo =
+        await getWaitingQueueInfo(
+          client,
 
-            FROM queue_entries q
-
-            CROSS JOIN queue_entries target
-
-            WHERE target.id = $1
-
-              AND q.status IN (
-                'aguardando',
-                'chamado',
-                'balanca'
-              )
-
-              AND (
-                q.arrival_time,
-                q.id
-              ) <= (
-                target.arrival_time,
-                target.id
-              )
-          `,
-          [
-            inserted.rows[0].id,
-          ]
+          inserted
+            .rows[0]
+            .id
         );
 
       await audit(
         "PUBLIC_QUEUE_CREATED",
         {
           id,
+
           plate,
-          distanceM: distance,
+
+          distanceM:
+            distance,
 
           presenceMonitoring:
             presenceRequired,
@@ -1146,34 +1843,63 @@ app.post(
         client
       );
 
-      await client.query("COMMIT");
+      await client.query(
+        "COMMIT"
+      );
 
-      res.status(201).json({
-        ...inserted.rows[0],
+      res
+        .status(201)
+        .json({
+          ...inserted
+            .rows[0],
 
-        position:
-          positionResult.rows[0].position,
+          position:
+            queueInfo
+              .position,
 
-        presenceRequired,
+          aheadPlates:
+            queueInfo
+              .aheadPlates,
 
-        presence: presenceSnapshot(
-          inserted.rows[0],
-          settings.radius_m
-        ),
-      });
-    } catch (error) {
-      await client
-        .query("ROLLBACK")
-        .catch(() => {});
+          presenceRequired,
 
-      if (error.code === "23505") {
-        return res.status(409).json({
-          error:
-            "Esta placa já está ativa na fila.",
+          presence:
+            presenceSnapshot(
+              inserted
+                .rows[0],
+
+              settings
+                .radius_m
+            ),
         });
+
+    } catch (
+      error
+    ) {
+      await client
+        .query(
+          "ROLLBACK"
+        )
+        .catch(
+          () => {}
+        );
+
+      if (
+        error.code ===
+        "23505"
+      ) {
+        return res
+          .status(409)
+          .json({
+            error:
+              "Esta placa já está ativa na fila.",
+          });
       }
 
-      next(error);
+      next(
+        error
+      );
+
     } finally {
       client.release();
     }
@@ -1182,33 +1908,52 @@ app.post(
 
 app.post(
   "/api/queue/:id/presence",
+
   presenceLimiter,
-  async (req, res, next) => {
-    const client = await pool.connect();
+
+  async (
+    req,
+    res,
+    next
+  ) => {
+    const client =
+      await pool.connect();
 
     try {
-      const deviceId = cleanText(
-        req.body.deviceId,
-        120
-      );
+      const deviceId =
+        cleanText(
+          req.body
+            .deviceId,
+          120
+        );
 
-      const latitude = Number(
-        req.body.latitude
-      );
+      const latitude =
+        Number(
+          req.body
+            .latitude
+        );
 
-      const longitude = Number(
-        req.body.longitude
-      );
+      const longitude =
+        Number(
+          req.body
+            .longitude
+        );
 
-      const accuracy = normalizeAccuracy(
-        req.body.accuracy
-      );
+      const accuracy =
+        normalizeAccuracy(
+          req.body
+            .accuracy
+        );
 
-      if (!deviceId) {
-        return res.status(400).json({
-          error:
-            "Não foi possível identificar o aparelho.",
-        });
+      if (
+        !deviceId
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Não foi possível identificar o aparelho.",
+          });
       }
 
       if (
@@ -1217,18 +1962,24 @@ app.post(
           -90,
           90
         ) ||
+
         !isFiniteCoordinate(
           longitude,
           -180,
           180
         )
       ) {
-        return res.status(400).json({
-          error: "Localização inválida.",
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Localização inválida.",
+          });
       }
 
-      await client.query("BEGIN");
+      await client.query(
+        "BEGIN"
+      );
 
       const currentResult =
         await client.query(
@@ -1248,92 +1999,135 @@ app.post(
 
             CROSS JOIN settings s
 
-            WHERE q.id = $1
-              AND s.id = 1
+            WHERE
+              q.id = $1
+
+              AND
+              s.id = 1
 
             FOR UPDATE OF q
           `,
-          [req.params.id]
+          [
+            req.params.id,
+          ]
         );
 
-      if (currentResult.rowCount === 0) {
-        await client.query("ROLLBACK");
+      if (
+        currentResult
+          .rowCount ===
+        0
+      ) {
+        await client.query(
+          "ROLLBACK"
+        );
 
-        return res.status(404).json({
-          error:
-            "Registro não encontrado.",
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Registro não encontrado.",
+          });
       }
 
       const current =
-        currentResult.rows[0];
+        currentResult
+          .rows[0];
 
       if (
         !safeCompare(
           deviceId,
-          current.device_id || ""
+
+          current
+            .device_id ||
+          ""
         )
       ) {
-        await client.query("ROLLBACK");
+        await client.query(
+          "ROLLBACK"
+        );
 
-        return res.status(403).json({
-          error:
-            "Este aparelho não pertence a este registro da fila.",
-        });
+        return res
+          .status(403)
+          .json({
+            error:
+              "Este aparelho não pertence a este registro da fila.",
+          });
       }
 
       if (
-        current.status !== "aguardando"
+        current.status !==
+        "aguardando"
       ) {
-        await client.query("ROLLBACK");
+        await client.query(
+          "ROLLBACK"
+        );
 
-        return res.status(409).json({
-          error:
-            "A verificação foi encerrada porque o caminhão não está mais aguardando.",
+        return res
+          .status(409)
+          .json({
+            error:
+              "A verificação foi encerrada porque o caminhão não está mais aguardando.",
 
-          active: false,
+            active:
+              false,
 
-          status: current.status,
-        });
+            status:
+              current.status,
+          });
       }
 
-      if (!current.presence_required) {
-        await client.query("ROLLBACK");
+      if (
+        !current
+          .presence_required
+      ) {
+        await client.query(
+          "ROLLBACK"
+        );
 
         return res.json({
-          active: false,
+          active:
+            false,
 
-          status: current.status,
+          status:
+            current.status,
 
-          presenceRequired: false,
+          presenceRequired:
+            false,
 
-          presence: presenceSnapshot(
-            current,
-            current.radius_m
-          ),
+          presence:
+            presenceSnapshot(
+              current,
+
+              current
+                .radius_m
+            ),
         });
       }
 
-      const distance = Math.round(
-        distanceMeters(
-          latitude,
-          longitude,
+      const distance =
+        Math.round(
+          distanceMeters(
+            latitude,
+            longitude,
 
-          Number(
-            current.unit_latitude
-          ),
+            Number(
+              current
+                .unit_latitude
+            ),
 
-          Number(
-            current.unit_longitude
+            Number(
+              current
+                .unit_longitude
+            )
           )
-        )
-      );
+        );
 
       /*
-       * V15.1.3:
-       * tipos explícitos nos parâmetros.
-       * Corrige PostgreSQL 42P08:
-       * "inconsistent types deduced for parameter".
+       * Tipos explícitos
+       * mantidos.
+       *
+       * Corrige PostgreSQL
+       * 42P08.
        */
       const updatedResult =
         await client.query(
@@ -1341,7 +2135,8 @@ app.post(
             UPDATE queue_entries
 
             SET
-              last_presence_at = NOW(),
+              last_presence_at =
+                NOW(),
 
               last_presence_latitude =
                 $1::double precision,
@@ -1355,30 +2150,39 @@ app.post(
               last_presence_accuracy_m =
                 $4::integer,
 
-              outside_since = CASE
+              outside_since =
+                CASE
 
-                WHEN
-                  $4::integer IS NOT NULL
-                  AND
-                  $4::integer >
-                  $5::integer
+                  WHEN
+                    $4::integer
+                    IS NOT NULL
 
-                THEN outside_since
+                    AND
 
-                WHEN
-                  $3::integer >
-                  $6::integer
+                    $4::integer >
+                    $5::integer
 
-                THEN COALESCE(
-                  outside_since,
-                  NOW()
-                )
+                  THEN
+                    outside_since
 
-                ELSE NULL
+                  WHEN
+                    $3::integer >
+                    $6::integer
 
-              END
+                  THEN
+                    COALESCE(
+                      outside_since,
+                      NOW()
+                    )
 
-            WHERE id = $7::uuid
+                  ELSE
+                    NULL
+
+                END
+
+            WHERE
+              id =
+                $7::uuid
 
             RETURNING *
           `,
@@ -1391,7 +2195,8 @@ app.post(
             PRESENCE_MAX_ACCURACY_METERS,
 
             Number(
-              current.radius_m
+              current
+                .radius_m
             ),
 
             req.params.id,
@@ -1399,60 +2204,92 @@ app.post(
         );
 
       const updated =
-        updatedResult.rows[0];
+        updatedResult
+          .rows[0];
 
       if (
-        !current.outside_since &&
-        updated.outside_since
+        !current
+          .outside_since &&
+
+        updated
+          .outside_since
       ) {
         await audit(
           "PRESENCE_OUTSIDE_STARTED",
           {
-            id: updated.id,
+            id:
+              updated.id,
 
-            plate: updated.plate,
+            plate:
+              updated.plate,
 
-            distanceM: distance,
+            distanceM:
+              distance,
           },
           client
         );
+
       } else if (
-        current.outside_since &&
-        !updated.outside_since
+        current
+          .outside_since &&
+
+        !updated
+          .outside_since
       ) {
         await audit(
           "PRESENCE_RETURNED",
           {
-            id: updated.id,
+            id:
+              updated.id,
 
-            plate: updated.plate,
+            plate:
+              updated.plate,
 
-            distanceM: distance,
+            distanceM:
+              distance,
           },
           client
         );
       }
 
-      await client.query("COMMIT");
+      await client.query(
+        "COMMIT"
+      );
 
       res.json({
-        active: true,
+        active:
+          true,
 
-        status: updated.status,
+        status:
+          updated.status,
 
-        presenceRequired: true,
+        presenceRequired:
+          true,
 
-        presence: presenceSnapshot(
-          updated,
-          current.radius_m
-        ),
+        presence:
+          presenceSnapshot(
+            updated,
+
+            current
+              .radius_m
+          ),
       });
-    } catch (error) {
-      await client
-        .query("ROLLBACK")
-        .catch(() => {});
 
-      next(error);
+    } catch (
+      error
+    ) {
+      await client
+        .query(
+          "ROLLBACK"
+        )
+        .catch(
+          () => {}
+        );
+
+      next(
+        error
+      );
+
     } finally {
       client.release();
     }
@@ -1461,113 +2298,141 @@ app.post(
 
 app.get(
   "/api/queue/:id/status",
-  async (req, res, next) => {
+
+  async (
+    req,
+    res,
+    next
+  ) => {
     try {
-      const result = await pool.query(
-        `
-          SELECT
-            q.*,
-            s.radius_m
+      const result =
+        await pool.query(
+          `
+            SELECT
+              q.*,
+              s.radius_m
 
-          FROM queue_entries q
+            FROM queue_entries q
 
-          CROSS JOIN settings s
+            CROSS JOIN settings s
 
-          WHERE q.id = $1
-            AND s.id = 1
-        `,
-        [req.params.id]
-      );
+            WHERE
+              q.id = $1
 
-      if (result.rowCount === 0) {
-        return res.status(404).json({
-          error:
-            "Registro não encontrado.",
-        });
-      }
-
-      const item = result.rows[0];
-
-      let position = null;
+              AND
+              s.id = 1
+          `,
+          [
+            req.params.id,
+          ]
+        );
 
       if (
-        [
-          "aguardando",
-          "chamado",
-        ].includes(item.status)
+        result.rowCount ===
+        0
       ) {
-        /*
-         * Atualiza a posição pelo ID.
-         * Mantém o mesmo cálculo do cadastro.
-         */
-        const positionResult =
-          await pool.query(
-            `
-              SELECT
-                COUNT(*)::int AS position
+        return res
+          .status(404)
+          .json({
+            error:
+              "Registro não encontrado.",
+          });
+      }
 
-              FROM queue_entries q
+      const item =
+        result
+          .rows[0];
 
-              CROSS JOIN queue_entries target
+      let position =
+        null;
 
-              WHERE target.id = $1
+      let aheadPlates =
+        [];
 
-                AND q.status IN (
-                  'aguardando',
-                  'chamado',
-                  'balanca'
-                )
-
-                AND (
-                  q.arrival_time,
-                  q.id
-                ) <= (
-                  target.arrival_time,
-                  target.id
-                )
-            `,
-            [item.id]
+      /*
+       * V15.2
+       *
+       * Só quem está aguardando
+       * possui posição na fila
+       * de espera.
+       */
+      if (
+        item.status ===
+        "aguardando"
+      ) {
+        const queueInfo =
+          await getWaitingQueueInfo(
+            pool,
+            item.id
           );
 
         position =
-          positionResult.rows[0].position;
+          queueInfo
+            .position;
+
+        aheadPlates =
+          queueInfo
+            .aheadPlates;
       }
 
       res.json({
-        id: item.id,
+        id:
+          item.id,
 
-        plate: item.plate,
+        plate:
+          item.plate,
 
-        status: item.status,
+        status:
+          item.status,
 
         arrival_time:
-          item.arrival_time,
+          item
+            .arrival_time,
 
         position,
 
+        aheadPlates,
+
         presenceRequired:
           Boolean(
-            item.presence_required
+            item
+              .presence_required
           ),
 
-        presence: presenceSnapshot(
-          item,
-          item.radius_m
-        ),
+        presence:
+          presenceSnapshot(
+            item,
+
+            item
+              .radius_m
+          ),
       });
-    } catch (error) {
-      next(error);
+
+    } catch (
+      error
+    ) {
+      next(
+        error
+      );
     }
   }
 );
 
 app.post(
   "/api/admin/login",
+
   loginLimiter,
-  (req, res) => {
-    const password = String(
-      req.body.password || ""
-    );
+
+  (
+    req,
+    res
+  ) => {
+    const password =
+      String(
+        req.body
+          .password ||
+        ""
+      );
 
     if (
       !safeCompare(
@@ -1575,42 +2440,56 @@ app.post(
         ADMIN_PASSWORD
       )
     ) {
-      return res.status(401).json({
-        error: "Senha incorreta.",
-      });
+      return res
+        .status(401)
+        .json({
+          error:
+            "Senha incorreta.",
+        });
     }
 
     res.json({
-      token: createAdminToken(),
-      expiresInHours: 12,
+      token:
+        createAdminToken(),
+
+      expiresInHours:
+        12,
     });
   }
 );
 
 app.get(
   "/api/admin/settings",
+
   requireAdmin,
-  async (_req, res, next) => {
+
+  async (
+    _req,
+    res,
+    next
+  ) => {
     try {
-      const result = await pool.query(
-        `
-          SELECT
-            unit_name,
-            daily_code,
-            latitude,
-            longitude,
-            radius_m,
-            block_device,
-            updated_at
+      const result =
+        await pool.query(
+          `
+            SELECT
+              unit_name,
+              daily_code,
+              latitude,
+              longitude,
+              radius_m,
+              block_device,
+              updated_at
 
-          FROM settings
+            FROM settings
 
-          WHERE id = 1
-        `
-      );
+            WHERE id = 1
+          `
+        );
 
       res.json({
-        ...result.rows[0],
+        ...result
+          .rows[0],
 
         presence_interval_seconds:
           PRESENCE_INTERVAL_SECONDS,
@@ -1624,55 +2503,88 @@ app.get(
         presence_max_accuracy_meters:
           PRESENCE_MAX_ACCURACY_METERS,
       });
-    } catch (error) {
-      next(error);
+
+    } catch (
+      error
+    ) {
+      next(
+        error
+      );
     }
   }
 );
 
 app.put(
   "/api/admin/settings",
+
   requireAdmin,
-  async (req, res, next) => {
+
+  async (
+    req,
+    res,
+    next
+  ) => {
     try {
-      const unitName = cleanText(
-        req.body.unitName,
-        120
-      );
+      const unitName =
+        cleanText(
+          req.body
+            .unitName,
+          120
+        );
 
-      const dailyCode = cleanText(
-        req.body.dailyCode,
-        12
-      );
+      const dailyCode =
+        cleanText(
+          req.body
+            .dailyCode,
+          12
+        );
 
-      const latitude = Number(
-        req.body.latitude
-      );
+      const latitude =
+        Number(
+          req.body
+            .latitude
+        );
 
-      const longitude = Number(
-        req.body.longitude
-      );
+      const longitude =
+        Number(
+          req.body
+            .longitude
+        );
 
-      const radiusM = Number(
-        req.body.radiusM
-      );
+      const radiusM =
+        Number(
+          req.body
+            .radiusM
+        );
 
-      const blockDevice = Boolean(
-        req.body.blockDevice
-      );
+      const blockDevice =
+        Boolean(
+          req.body
+            .blockDevice
+        );
 
-      if (unitName.length < 2) {
-        return res.status(400).json({
-          error:
-            "Nome da unidade inválido.",
-        });
+      if (
+        unitName.length <
+        2
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Nome da unidade inválido.",
+          });
       }
 
-      if (dailyCode.length < 3) {
-        return res.status(400).json({
-          error:
-            "Código do dia inválido.",
-        });
+      if (
+        dailyCode.length <
+        3
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Código do dia inválido.",
+          });
       }
 
       if (
@@ -1682,9 +2594,12 @@ app.put(
           90
         )
       ) {
-        return res.status(400).json({
-          error: "Latitude inválida.",
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Latitude inválida.",
+          });
       }
 
       if (
@@ -1694,55 +2609,66 @@ app.put(
           180
         )
       ) {
-        return res.status(400).json({
-          error: "Longitude inválida.",
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Longitude inválida.",
+          });
       }
 
       if (
-        !Number.isInteger(radiusM) ||
+        !Number.isInteger(
+          radiusM
+        ) ||
+
         radiusM < 20 ||
-        radiusM > 10000
+
+        radiusM >
+        10000
       ) {
-        return res.status(400).json({
-          error:
-            "O raio deve ficar entre 20 e 10.000 metros.",
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "O raio deve ficar entre 20 e 10.000 metros.",
+          });
       }
 
-      const result = await pool.query(
-        `
-          UPDATE settings
+      const result =
+        await pool.query(
+          `
+            UPDATE settings
 
-          SET
-            unit_name = $1,
-            daily_code = $2,
-            latitude = $3,
-            longitude = $4,
-            radius_m = $5,
-            block_device = $6,
-            updated_at = NOW()
+            SET
+              unit_name = $1,
+              daily_code = $2,
+              latitude = $3,
+              longitude = $4,
+              radius_m = $5,
+              block_device = $6,
+              updated_at = NOW()
 
-          WHERE id = 1
+            WHERE id = 1
 
-          RETURNING
-            unit_name,
-            daily_code,
+            RETURNING
+              unit_name,
+              daily_code,
+              latitude,
+              longitude,
+              radius_m,
+              block_device,
+              updated_at
+          `,
+          [
+            unitName,
+            dailyCode,
             latitude,
             longitude,
-            radius_m,
-            block_device,
-            updated_at
-        `,
-        [
-          unitName,
-          dailyCode,
-          latitude,
-          longitude,
-          radiusM,
-          blockDevice,
-        ]
-      );
+            radiusM,
+            blockDevice,
+          ]
+        );
 
       await audit(
         "SETTINGS_UPDATED",
@@ -1753,24 +2679,39 @@ app.put(
         }
       );
 
-      res.json(result.rows[0]);
-    } catch (error) {
-      next(error);
+      res.json(
+        result.rows[0]
+      );
+
+    } catch (
+      error
+    ) {
+      next(
+        error
+      );
     }
   }
 );
 
 app.post(
   "/api/admin/settings/new-code",
+
   requireAdmin,
-  async (_req, res, next) => {
+
+  async (
+    _req,
+    res,
+    next
+  ) => {
     try {
-      const dailyCode = String(
-        crypto.randomInt(
-          1000,
-          10000
-        )
-      );
+      const dailyCode =
+        String(
+          crypto
+            .randomInt(
+              1000,
+              10000
+            )
+        );
 
       await pool.query(
         `
@@ -1782,7 +2723,9 @@ app.post(
 
           WHERE id = 1
         `,
-        [dailyCode]
+        [
+          dailyCode,
+        ]
       );
 
       await audit(
@@ -1795,151 +2738,212 @@ app.post(
       res.json({
         dailyCode,
       });
-    } catch (error) {
-      next(error);
+
+    } catch (
+      error
+    ) {
+      next(
+        error
+      );
     }
   }
 );
 
 app.get(
   "/api/admin/queue",
+
   requireAdmin,
-  async (_req, res, next) => {
+
+  async (
+    _req,
+    res,
+    next
+  ) => {
     try {
       const settingsResult =
         await pool.query(
           `
-            SELECT radius_m
+            SELECT
+              radius_m
+
             FROM settings
+
             WHERE id = 1
           `
         );
 
       const radius =
-        settingsResult.rows[0].radius_m;
+        settingsResult
+          .rows[0]
+          .radius_m;
 
-      const result = await pool.query(
-        `
-          SELECT
-            id,
-            plate,
-            driver_name,
-            carrier,
-            status,
-            arrival_time,
-            updated_at,
-            distance_m,
-            latitude,
-            longitude,
-            manual,
-            presence_required,
-            last_presence_at,
-            last_presence_latitude,
-            last_presence_longitude,
-            last_presence_distance_m,
-            last_presence_accuracy_m,
-            outside_since
+      const result =
+        await pool.query(
+          `
+            SELECT
+              id,
+              plate,
+              driver_name,
+              carrier,
+              status,
+              arrival_time,
+              updated_at,
+              distance_m,
+              latitude,
+              longitude,
+              manual,
+              presence_required,
+              last_presence_at,
+              last_presence_latitude,
+              last_presence_longitude,
+              last_presence_distance_m,
+              last_presence_accuracy_m,
+              outside_since
 
-          FROM queue_entries
+            FROM queue_entries
 
-          ORDER BY
+            ORDER BY
 
-            CASE
-              WHEN status = 'finalizado'
-              THEN 1
-              ELSE 0
-            END,
+              CASE
+                WHEN status =
+                  'finalizado'
+                THEN 1
+                ELSE 0
+              END,
 
-            arrival_time ASC,
-            id ASC
+              arrival_time ASC,
+              id ASC
 
-          LIMIT 500
-        `
-      );
+            LIMIT 500
+          `
+        );
 
       res.json(
-        result.rows.map((row) => ({
-          ...row,
+        result
+          .rows
+          .map(
+            (row) => ({
+              ...row,
 
-          presence: presenceSnapshot(
-            row,
-            radius
-          ),
-        }))
+              presence:
+                presenceSnapshot(
+                  row,
+                  radius
+                ),
+            })
+          )
       );
-    } catch (error) {
-      next(error);
+
+    } catch (
+      error
+    ) {
+      next(
+        error
+      );
     }
   }
 );
 
 app.post(
   "/api/admin/queue/manual",
+
   requireAdmin,
-  async (req, res, next) => {
+
+  async (
+    req,
+    res,
+    next
+  ) => {
     try {
-      const plate = normalizePlate(
-        req.body.plate
-      );
+      const plate =
+        normalizePlate(
+          req.body
+            .plate
+        );
 
-      const driverName = cleanText(
-        req.body.driverName,
-        120
-      );
+      const driverName =
+        cleanText(
+          req.body
+            .driverName,
+          120
+        );
 
-      const carrier = cleanText(
-        req.body.carrier,
-        160
-      );
+      const carrier =
+        cleanText(
+          req.body
+            .carrier,
+          160
+        );
 
-      if (!isValidPlate(plate)) {
-        return res.status(400).json({
-          error: "Placa inválida.",
-        });
+      if (
+        !isValidPlate(
+          plate
+        )
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Placa inválida.",
+          });
       }
 
-      if (driverName.length < 3) {
-        return res.status(400).json({
-          error: "Motorista inválido.",
-        });
+      if (
+        driverName.length <
+        3
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Motorista inválido.",
+          });
       }
 
-      if (carrier.length < 2) {
-        return res.status(400).json({
-          error:
-            "Transportadora inválida.",
-        });
+      if (
+        carrier.length <
+        2
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Transportadora inválida.",
+          });
       }
 
-      const id = crypto.randomUUID();
+      const id =
+        crypto
+          .randomUUID();
 
-      const result = await pool.query(
-        `
-          INSERT INTO queue_entries (
+      const result =
+        await pool.query(
+          `
+            INSERT INTO queue_entries (
+              id,
+              plate,
+              driver_name,
+              carrier,
+              manual,
+              presence_required
+            )
+            VALUES (
+              $1,
+              $2,
+              $3,
+              $4,
+              TRUE,
+              FALSE
+            )
+            RETURNING *
+          `,
+          [
             id,
             plate,
-            driver_name,
+            driverName,
             carrier,
-            manual,
-            presence_required
-          )
-          VALUES (
-            $1,
-            $2,
-            $3,
-            $4,
-            TRUE,
-            FALSE
-          )
-          RETURNING *
-        `,
-        [
-          id,
-          plate,
-          driverName,
-          carrier,
-        ]
-      );
+          ]
+        );
 
       await audit(
         "MANUAL_QUEUE_CREATED",
@@ -1949,50 +2953,85 @@ app.post(
         }
       );
 
-      res.status(201).json(
-        result.rows[0]
-      );
-    } catch (error) {
-      if (error.code === "23505") {
-        return res.status(409).json({
-          error:
-            "Esta placa já está ativa na fila.",
-        });
+      res
+        .status(201)
+        .json(
+          result
+            .rows[0]
+        );
+
+    } catch (
+      error
+    ) {
+      if (
+        error.code ===
+        "23505"
+      ) {
+        return res
+          .status(409)
+          .json({
+            error:
+              "Esta placa já está ativa na fila.",
+          });
       }
 
-      next(error);
+      next(
+        error
+      );
     }
   }
 );
 
 app.patch(
   "/api/admin/queue/:id/status",
+
   requireAdmin,
-  async (req, res, next) => {
-    const client = await pool.connect();
+
+  async (
+    req,
+    res,
+    next
+  ) => {
+    const client =
+      await pool.connect();
 
     try {
-      const allowed = new Set([
-        "aguardando",
-        "chamado",
-        "balanca",
-        "finalizado",
-      ]);
+      const allowed =
+        new Set([
+          "aguardando",
+          "chamado",
+          "balanca",
+          "finalizado",
+        ]);
 
-      const status = String(
-        req.body.status || ""
-      );
+      const status =
+        String(
+          req.body
+            .status ||
+          ""
+        );
 
       const forcePresence =
-        req.body.forcePresence === true;
+        req.body
+          .forcePresence ===
+        true;
 
-      if (!allowed.has(status)) {
-        return res.status(400).json({
-          error: "Situação inválida.",
-        });
+      if (
+        !allowed.has(
+          status
+        )
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Situação inválida.",
+          });
       }
 
-      await client.query("BEGIN");
+      await client.query(
+        "BEGIN"
+      );
 
       const currentResult =
         await client.query(
@@ -2005,120 +3044,176 @@ app.patch(
 
             CROSS JOIN settings s
 
-            WHERE q.id = $1
-              AND s.id = 1
+            WHERE
+              q.id = $1
+
+              AND
+              s.id = 1
 
             FOR UPDATE OF q
           `,
-          [req.params.id]
+          [
+            req.params.id,
+          ]
         );
 
-      if (currentResult.rowCount === 0) {
-        await client.query("ROLLBACK");
+      if (
+        currentResult
+          .rowCount ===
+        0
+      ) {
+        await client.query(
+          "ROLLBACK"
+        );
 
-        return res.status(404).json({
-          error:
-            "Registro não encontrado.",
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Registro não encontrado.",
+          });
       }
 
       const current =
-        currentResult.rows[0];
+        currentResult
+          .rows[0];
 
-      if (status === "chamado") {
+      if (
+        status ===
+        "chamado"
+      ) {
         if (
-          current.status !== "aguardando"
+          current.status !==
+          "aguardando"
         ) {
-          await client.query("ROLLBACK");
+          await client.query(
+            "ROLLBACK"
+          );
 
-          return res.status(409).json({
-            error:
-              "Este motorista já foi chamado ou não está mais aguardando.",
-          });
+          return res
+            .status(409)
+            .json({
+              error:
+                "Este motorista já foi chamado ou não está mais aguardando.",
+            });
         }
 
         const presence =
           presenceSnapshot(
             current,
-            current.radius_m
+
+            current
+              .radius_m
           );
 
         if (
-          !presence.canCall &&
+          !presence
+            .canCall &&
+
           !forcePresence
         ) {
-          await client.query("ROLLBACK");
+          await client.query(
+            "ROLLBACK"
+          );
 
-          return res.status(409).json({
-            error:
-              presence.blockReason,
+          return res
+            .status(409)
+            .json({
+              error:
+                presence
+                  .blockReason,
 
-            code:
-              "PRESENCE_BLOCKED",
+              code:
+                "PRESENCE_BLOCKED",
 
-            presence,
-          });
+              presence,
+            });
         }
 
         if (
-          !presence.canCall &&
+          !presence
+            .canCall &&
+
           forcePresence
         ) {
           await audit(
             "QUEUE_CALLED_WITH_PRESENCE_OVERRIDE",
             {
-              id: current.id,
+              id:
+                current.id,
 
-              plate: current.plate,
+              plate:
+                current.plate,
 
               presenceState:
                 presence.state,
 
               reason:
-                presence.blockReason,
+                presence
+                  .blockReason,
             },
             client
           );
         }
       }
 
-      const result = await client.query(
-        `
-          UPDATE queue_entries
+      const result =
+        await client.query(
+          `
+            UPDATE queue_entries
 
-          SET
-            status = $1,
-            updated_at = NOW()
+            SET
+              status = $1,
+              updated_at = NOW()
 
-          WHERE id = $2
+            WHERE
+              id = $2
 
-          RETURNING *
-        `,
-        [
-          status,
-          req.params.id,
-        ]
-      );
+            RETURNING *
+          `,
+          [
+            status,
+            req.params.id,
+          ]
+        );
 
       await audit(
         "QUEUE_STATUS_UPDATED",
         {
-          id: req.params.id,
+          id:
+            req.params.id,
+
           status,
+
           forcePresence,
         },
         client
       );
 
-      await client.query("COMMIT");
+      await client.query(
+        "COMMIT"
+      );
 
-      res.json(result.rows[0]);
-    } catch (error) {
+      res.json(
+        result
+          .rows[0]
+      );
+
+    } catch (
+      error
+    ) {
       await client
-        .query("ROLLBACK")
-        .catch(() => {});
+        .query(
+          "ROLLBACK"
+        )
+        .catch(
+          () => {}
+        );
 
-      next(error);
+      next(
+        error
+      );
+
     } finally {
       client.release();
     }
@@ -2127,65 +3222,102 @@ app.patch(
 
 app.delete(
   "/api/admin/queue/:id",
+
   requireAdmin,
-  async (req, res, next) => {
+
+  async (
+    req,
+    res,
+    next
+  ) => {
     try {
-      const result = await pool.query(
-        `
-          DELETE FROM queue_entries
+      const result =
+        await pool.query(
+          `
+            DELETE FROM queue_entries
 
-          WHERE id = $1
+            WHERE
+              id = $1
 
-          RETURNING plate
-        `,
-        [req.params.id]
-      );
+            RETURNING
+              plate
+          `,
+          [
+            req.params.id,
+          ]
+        );
 
-      if (result.rowCount === 0) {
-        return res.status(404).json({
-          error:
-            "Registro não encontrado.",
-        });
+      if (
+        result.rowCount ===
+        0
+      ) {
+        return res
+          .status(404)
+          .json({
+            error:
+              "Registro não encontrado.",
+          });
       }
 
       await audit(
         "QUEUE_DELETED",
         {
-          id: req.params.id,
+          id:
+            req.params.id,
 
           plate:
-            result.rows[0].plate,
+            result
+              .rows[0]
+              .plate,
         }
       );
 
       res.json({
-        ok: true,
+        ok:
+          true,
       });
-    } catch (error) {
-      next(error);
+
+    } catch (
+      error
+    ) {
+      next(
+        error
+      );
     }
   }
 );
 
 app.delete(
   "/api/admin/queue",
+
   requireAdmin,
-  async (req, res, next) => {
+
+  async (
+    req,
+    res,
+    next
+  ) => {
     try {
       const scope =
-        req.query.scope === "finished"
+        req.query.scope ===
+        "finished"
           ? "finished"
           : "all";
 
       const result =
-        scope === "finished"
+        scope ===
+        "finished"
+
           ? await pool.query(
               `
                 DELETE FROM queue_entries
 
-                WHERE status = 'finalizado'
+                WHERE
+                  status =
+                    'finalizado'
               `
             )
+
           : await pool.query(
               `
                 DELETE FROM queue_entries
@@ -2197,17 +3329,25 @@ app.delete(
         {
           scope,
 
-          count: result.rowCount,
+          count:
+            result.rowCount,
         }
       );
 
       res.json({
-        ok: true,
+        ok:
+          true,
 
-        deleted: result.rowCount,
+        deleted:
+          result.rowCount,
       });
-    } catch (error) {
-      next(error);
+
+    } catch (
+      error
+    ) {
+      next(
+        error
+      );
     }
   }
 );
@@ -2219,10 +3359,13 @@ app.use(
       "public"
     ),
     {
-      extensions: ["html"],
+      extensions: [
+        "html",
+      ],
 
       maxAge:
-        process.env.NODE_ENV ===
+        process.env
+          .NODE_ENV ===
         "production"
           ? "1h"
           : 0,
@@ -2232,7 +3375,11 @@ app.use(
 
 app.get(
   "/{*splat}",
-  (_req, res) => {
+
+  (
+    _req,
+    res
+  ) => {
     res.sendFile(
       path.join(
         __dirname,
@@ -2244,47 +3391,70 @@ app.get(
 );
 
 app.use(
-  (error, req, res, _next) => {
-    console.error("ERRO INTERNO:", {
-      method: req.method,
+  (
+    error,
+    req,
+    res,
+    _next
+  ) => {
+    console.error(
+      "ERRO INTERNO:",
+      {
+        method:
+          req.method,
 
-      path: req.originalUrl,
+        path:
+          req.originalUrl,
 
-      message: error.message,
+        message:
+          error.message,
 
-      code: error.code,
+        code:
+          error.code,
 
-      detail: error.detail,
+        detail:
+          error.detail,
 
-      constraint: error.constraint,
+        constraint:
+          error.constraint,
 
-      stack: error.stack,
-    });
+        stack:
+          error.stack,
+      }
+    );
 
-    res.status(500).json({
-      error:
-        "Erro interno do sistema.",
-    });
+    res
+      .status(500)
+      .json({
+        error:
+          "Erro interno do sistema.",
+      });
   }
 );
 
 initDatabase()
-  .then(() => {
-    app.listen(
-      PORT,
-      "0.0.0.0",
-      () => {
-        console.log(
-          `Fila de carregamento V15.1.3 iniciada na porta ${PORT}.`
-        );
-      }
-    );
-  })
-  .catch((error) => {
-    console.error(
-      "Falha ao preparar o banco de dados:",
-      error
-    );
+  .then(
+    () => {
+      app.listen(
+        PORT,
+        "0.0.0.0",
+        () => {
+          console.log(
+            `Fila de carregamento V15.2.0 iniciada na porta ${PORT}.`
+          );
+        }
+      );
+    }
+  )
+  .catch(
+    (error) => {
+      console.error(
+        "Falha ao preparar o banco de dados:",
+        error
+      );
 
-    process.exit(1);
-  });
+      process.exit(
+        1
+      );
+    }
+  );
