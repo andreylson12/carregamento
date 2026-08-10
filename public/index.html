@@ -1,1078 +1,1214 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#10233f">
-  <title>Fila de Carregamento</title>
-
-  <link rel="manifest" href="/manifest.json">
-  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Fila AGREX">
-
-  <style>
-    :root {
-      --navy: #10233f;
-      --blue: #1f6feb;
-      --green: #137a4f;
-      --red: #c43d3d;
-      --amber: #ef9f25;
-      --purple: #7c3aed;
-      --bg: #f3f6fa;
-      --card: #ffffff;
-      --line: #dbe2ea;
-      --text: #172033;
-      --muted: #667085;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      color: var(--text);
-      background: linear-gradient(
-        135deg,
-        #edf4ff,
-        #f8fafc 52%,
-        #eef7f2
-      );
-    }
-
-    header {
-      padding: 20px 16px;
-      color: #ffffff;
-      background: var(--navy);
-      box-shadow: 0 6px 20px #0002;
-    }
-
-    .wrap {
-      max-width: 1440px;
-      margin: auto;
-    }
-
-    .head {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .head h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .head p {
-      margin: 5px 0 0;
-      color: #cbd8eb;
-    }
-
-    .badge-top {
-      padding: 8px 12px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #4f3900;
-      background: #ffcf5a;
-      border-radius: 999px;
-    }
-
-    main {
-      padding: 24px 16px 42px;
-    }
-
-    .tabs,
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .tabs {
-      margin-bottom: 18px;
-    }
-
-    .actions {
-      margin-top: 14px;
-    }
-
-    .tab,
-    .btn {
-      padding: 12px 16px;
-      font-weight: 700;
-      cursor: pointer;
-      border: 0;
-      border-radius: 11px;
-    }
-
-    .tab {
-      color: #445069;
-      background: #ffffff;
-      border: 1px solid var(--line);
-    }
-
-    .tab.active,
-    .primary {
-      color: #ffffff;
-      background: var(--blue);
-    }
-
-    .success {
-      color: #ffffff;
-      background: var(--green);
-    }
-
-    .danger {
-      color: #ffffff;
-      background: var(--red);
-    }
-
-    .dark {
-      color: #ffffff;
-      background: #203047;
-    }
-
-    .secondary {
-      color: #263850;
-      background: #e9eff7;
-    }
-
-    .warning {
-      color: #2e1b00;
-      background: var(--amber);
-    }
-
-    .small {
-      padding: 8px 10px;
-      font-size: 12px;
-    }
-
-    .block {
-      width: 100%;
-      padding: 14px;
-      margin-top: 16px;
-    }
-
-    .btn:disabled {
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    .view {
-      display: none;
-    }
-
-    .view.active {
-      display: block;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 18px;
-    }
-
-    .c12 {
-      grid-column: span 12;
-    }
-
-    .c8 {
-      grid-column: span 8;
-    }
-
-    .c7 {
-      grid-column: span 7;
-    }
-
-    .c5 {
-      grid-column: span 5;
-    }
-
-    .c4 {
-      grid-column: span 4;
-    }
-
-    .queue-card {
-      grid-column: span 12;
-    }
-
-    .qr-card {
-      grid-column: span 4;
-    }
-
-    .settings-card {
-      grid-column: span 8;
-    }
-
-    .card {
-      padding: 20px;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: 0 12px 32px #10203012;
-    }
-
-    h2,
-    h3 {
-      margin-top: 0;
-    }
-
-    .help {
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--muted);
-    }
-
-    label {
-      display: block;
-      margin: 14px 0 7px;
-      font-size: 13px;
-      font-weight: 700;
-      color: #344054;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px 13px;
-      font-size: 15px;
-      outline: none;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-    }
-
-    input:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px #1f6feb1e;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .message {
-      padding: 13px;
-      margin-top: 14px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-    }
-
-    .ok {
-      color: #0d633f;
-      background: #ecfdf3;
-      border-color: #a8e6c4;
-    }
-
-    .bad {
-      color: #9d2525;
-      background: #fff1f1;
-      border-color: #f2baba;
-    }
-
-    .warn {
-      color: #7b4a00;
-      background: #fff8e8;
-      border-color: #f0d28a;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .ticket {
-      padding: 24px;
-      text-align: center;
-      background: #f9fbff;
-      border: 2px dashed #a7b4c6;
-      border-radius: 18px;
-    }
-
-    .number {
-      margin: 10px;
-      font-size: 72px;
-      font-weight: 900;
-      line-height: 1;
-      color: var(--blue);
-    }
-
-    .ahead-count {
-      margin: 12px 0 4px;
-      padding: 12px;
-      font-size: 17px;
-      font-weight: 800;
-      color: #17467a;
-      background: #eaf3ff;
-      border: 1px solid #bfd8f4;
-      border-radius: 12px;
-    }
-
-    .presence-ticket {
-      padding: 11px;
-      margin-top: 12px;
-      text-align: left;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-    }
-
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .mini {
-      padding: 16px;
-      background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-    }
-
-    .mini b {
-      display: block;
-      margin-top: 6px;
-      font-size: 28px;
-    }
-
-    .table-wrap {
-      margin-top: 14px;
-      overflow-x: auto;
-      border: 1px solid #e5eaf0;
-      border-radius: 12px;
-    }
-
-    table {
-      width: 100%;
-      min-width: 1220px;
-      table-layout: fixed;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      padding: 11px 9px;
-      overflow-wrap: anywhere;
-      font-size: 14px;
-      text-align: left;
-      vertical-align: middle;
-      border-bottom: 1px solid #e5eaf0;
-    }
-
-    th {
-      color: #475467;
-      background: #f5f7fa;
-    }
-
-    th:nth-child(1),
-    td:nth-child(1) {
-      width: 54px;
-    }
-
-    th:nth-child(2),
-    td:nth-child(2) {
-      width: 92px;
-    }
-
-    th:nth-child(3),
-    td:nth-child(3) {
-      width: 130px;
-    }
-
-    th:nth-child(4),
-    td:nth-child(4) {
-      width: 150px;
-    }
-
-    th:nth-child(5),
-    td:nth-child(5) {
-      width: 145px;
-    }
-
-    th:nth-child(6),
-    td:nth-child(6) {
-      width: 90px;
-    }
-
-    th:nth-child(7),
-    td:nth-child(7) {
-      width: 180px;
-    }
-
-    th:nth-child(8),
-    td:nth-child(8) {
-      width: 105px;
-    }
-
-    th:nth-child(9),
-    td:nth-child(9) {
-      width: 250px;
-    }
-
-    .pill {
-      display: inline-block;
-      padding: 6px 9px;
-      font-size: 12px;
-      font-weight: 700;
-      border-radius: 999px;
-    }
-
-    .p-wait {
-      color: #1451a5;
-      background: #e8f1ff;
-    }
-
-    .p-call {
-      color: #7c5300;
-      background: #fff2c9;
-    }
-
-    .p-scale {
-      color: #12613f;
-      background: #e7f8ee;
-    }
-
-    .p-done {
-      color: #4a5568;
-      background: #e9ecef;
-    }
-
-    .p-manual {
-      color: #6b32a8;
-      background: #f2eafe;
-    }
-
-    .presence-inside {
-      color: #12613f;
-      background: #e7f8ee;
-    }
-
-    .presence-stale {
-      color: #7c5300;
-      background: #fff2c9;
-    }
-
-    .presence-outside {
-      color: #a51d1d;
-      background: #ffe2e2;
-    }
-
-    .presence-inaccurate {
-      color: #6b21a8;
-      background: #f3e8ff;
-    }
-
-    .presence-legacy {
-      color: #4a5568;
-      background: #e9ecef;
-    }
-
-    .presence-pending {
-      color: #1451a5;
-      background: #e8f1ff;
-    }
-
-    .presence-detail {
-      display: block;
-      margin-top: 5px;
-      font-size: 11px;
-      line-height: 1.35;
-      color: var(--muted);
-    }
-
-    .row-actions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(105px, 1fr));
-      gap: 6px;
-      min-width: 230px;
-    }
-
-    .row-actions .btn {
-      width: 100%;
-      padding: 8px;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-
-    .login {
-      max-width: 430px;
-      margin: auto;
-    }
-
-    .qr {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 250px;
-      padding: 16px;
-      border: 1px dashed #aeb9c8;
-      border-radius: 16px;
-    }
-
-    .foot {
-      margin-top: 20px;
-      font-size: 12px;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    @media (max-width: 950px) {
-      .c8,
-      .c7,
-      .c5,
-      .c4,
-      .queue-card,
-      .qr-card,
-      .settings-card {
-        grid-column: span 12;
-      }
-
-      .row,
-      .summary {
-        grid-template-columns: 1fr;
-      }
-
-      .head {
-        align-items: flex-start;
-      }
-
-      .head h1 {
-        font-size: 20px;
-      }
-
-      .row-actions {
-        min-width: 220px;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10233f">
+<title>Fila de Carregamento</title>
+
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Fila AGREX">
+
+<style>
+:root {
+  --navy: #10233f;
+  --blue: #1f6feb;
+  --green: #137a4f;
+  --red: #c43d3d;
+  --amber: #ef9f25;
+  --purple: #7c3aed;
+  --bg: #f3f6fa;
+  --card: #ffffff;
+  --line: #dbe2ea;
+  --text: #172033;
+  --muted: #667085;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+
+  background: linear-gradient(
+    135deg,
+    #edf4ff,
+    #f8fafc 52%,
+    #eef7f2
+  );
+}
+
+header {
+  padding: 20px 16px;
+  color: #ffffff;
+  background: var(--navy);
+  box-shadow: 0 6px 20px #0002;
+}
+
+.wrap {
+  max-width: 1440px;
+  margin: auto;
+}
+
+.head {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.head h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.head p {
+  margin: 5px 0 0;
+  color: #cbd8eb;
+}
+
+.badge-top {
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4f3900;
+  background: #ffcf5a;
+  border-radius: 999px;
+}
+
+main {
+  padding: 24px 16px 42px;
+}
+
+.tabs,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tabs {
+  margin-bottom: 18px;
+}
+
+.actions {
+  margin-top: 14px;
+}
+
+.tab,
+.btn {
+  padding: 12px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 0;
+  border-radius: 11px;
+}
+
+.tab {
+  color: #445069;
+  background: #ffffff;
+  border: 1px solid var(--line);
+}
+
+.tab.active,
+.primary {
+  color: #ffffff;
+  background: var(--blue);
+}
+
+.success {
+  color: #ffffff;
+  background: var(--green);
+}
+
+.danger {
+  color: #ffffff;
+  background: var(--red);
+}
+
+.dark {
+  color: #ffffff;
+  background: #203047;
+}
+
+.secondary {
+  color: #263850;
+  background: #e9eff7;
+}
+
+.warning {
+  color: #2e1b00;
+  background: var(--amber);
+}
+
+.small {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.block {
+  width: 100%;
+  padding: 14px;
+  margin-top: 16px;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 18px;
+}
+
+.c12 {
+  grid-column: span 12;
+}
+
+.c8 {
+  grid-column: span 8;
+}
+
+.c7 {
+  grid-column: span 7;
+}
+
+.c5 {
+  grid-column: span 5;
+}
+
+.c4 {
+  grid-column: span 4;
+}
+
+.queue-card {
+  grid-column: span 12;
+}
+
+.qr-card {
+  grid-column: span 4;
+}
+
+.settings-card {
+  grid-column: span 8;
+}
+
+.card {
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 12px 32px #10203012;
+}
+
+h2,
+h3 {
+  margin-top: 0;
+}
+
+.help {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+label {
+  display: block;
+  margin: 14px 0 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #344054;
+}
+
+input {
+  width: 100%;
+  padding: 12px 13px;
+  font-size: 15px;
+  outline: none;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+}
+
+input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px #1f6feb1e;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.message {
+  padding: 13px;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.ok {
+  color: #0d633f;
+  background: #ecfdf3;
+  border-color: #a8e6c4;
+}
+
+.bad {
+  color: #9d2525;
+  background: #fff1f1;
+  border-color: #f2baba;
+}
+
+.warn {
+  color: #7b4a00;
+  background: #fff8e8;
+  border-color: #f0d28a;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.ticket {
+  padding: 24px;
+  text-align: center;
+  background: #f9fbff;
+  border: 2px dashed #a7b4c6;
+  border-radius: 18px;
+}
+
+.number {
+  margin: 10px;
+  font-size: 72px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--blue);
+}
+
+.ahead-count {
+  margin: 12px 0 4px;
+  padding: 12px;
+  font-size: 17px;
+  font-weight: 800;
+  color: #17467a;
+  background: #eaf3ff;
+  border: 1px solid #bfd8f4;
+  border-radius: 12px;
+}
+
+/*
+ * NOVO V15.2
+ * Caixa com as duas placas imediatamente
+ * à frente do motorista.
+ */
+.ahead-plates {
+  margin: 10px 0 4px;
+  padding: 14px;
+  text-align: left;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.ahead-plates-title {
+  margin-bottom: 9px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #344054;
+}
+
+.ahead-plate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 9px 10px;
+  margin-top: 7px;
+
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 10px;
+}
+
+.ahead-plate-position {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.ahead-plate-number {
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--navy);
+  letter-spacing: 0.5px;
+}
+
+.presence-ticket {
+  padding: 11px;
+  margin-top: 12px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mini {
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.mini b {
+  display: block;
+  margin-top: 6px;
+  font-size: 28px;
+}
+
+.table-wrap {
+  margin-top: 14px;
+  overflow-x: auto;
+  border: 1px solid #e5eaf0;
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  min-width: 1220px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 11px 9px;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid #e5eaf0;
+}
+
+th {
+  color: #475467;
+  background: #f5f7fa;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+  width: 54px;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  width: 92px;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+  width: 130px;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+  width: 150px;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+  width: 145px;
+}
+
+th:nth-child(6),
+td:nth-child(6) {
+  width: 90px;
+}
+
+th:nth-child(7),
+td:nth-child(7) {
+  width: 180px;
+}
+
+th:nth-child(8),
+td:nth-child(8) {
+  width: 105px;
+}
+
+th:nth-child(9),
+td:nth-child(9) {
+  width: 250px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 6px 9px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.p-wait {
+  color: #1451a5;
+  background: #e8f1ff;
+}
+
+.p-call {
+  color: #7c5300;
+  background: #fff2c9;
+}
+
+.p-scale {
+  color: #12613f;
+  background: #e7f8ee;
+}
+
+.p-done {
+  color: #4a5568;
+  background: #e9ecef;
+}
+
+.p-manual {
+  color: #6b32a8;
+  background: #f2eafe;
+}
+
+.presence-inside {
+  color: #12613f;
+  background: #e7f8ee;
+}
+
+.presence-stale {
+  color: #7c5300;
+  background: #fff2c9;
+}
+
+.presence-outside {
+  color: #a51d1d;
+  background: #ffe2e2;
+}
+
+.presence-inaccurate {
+  color: #6b21a8;
+  background: #f3e8ff;
+}
+
+.presence-legacy {
+  color: #4a5568;
+  background: #e9ecef;
+}
+
+.presence-pending {
+  color: #1451a5;
+  background: #e8f1ff;
+}
+
+.presence-detail {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.row-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(105px, 1fr));
+  gap: 6px;
+  min-width: 230px;
+}
+
+.row-actions .btn {
+  width: 100%;
+  padding: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.login {
+  max-width: 430px;
+  margin: auto;
+}
+
+.qr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+  padding: 16px;
+  border: 1px dashed #aeb9c8;
+  border-radius: 16px;
+}
+
+.foot {
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 950px) {
+  .c8,
+  .c7,
+  .c5,
+  .c4,
+  .queue-card,
+  .qr-card,
+  .settings-card {
+    grid-column: span 12;
+  }
+
+  .row,
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .head {
+    align-items: flex-start;
+  }
+
+  .head h1 {
+    font-size: 20px;
+  }
+
+  .row-actions {
+    min-width: 220px;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="wrap head">
-    <div>
-      <h1>🚛 Fila de Carregamento</h1>
-      <p id="unitHeader">Carregando unidade...</p>
-    </div>
+<div class="wrap head">
 
-    <span class="badge-top">
-      QR + LOCALIZAÇÃO • PWA V15
-    </span>
+  <div>
+    <h1>🚛 Fila de Carregamento</h1>
+    <p id="unitHeader">
+      Carregando unidade...
+    </p>
   </div>
+
+  <span class="badge-top">
+    QR + LOCALIZAÇÃO • PWA V15.2
+  </span>
+
+</div>
 </header>
 
 <main class="wrap">
 
-  <div class="tabs">
-    <button class="tab active" data-view="driver">
-      📱 Motorista
-    </button>
+<div class="tabs">
 
-    <button class="tab" data-view="admin">
-      🖥️ Painel da unidade
-    </button>
-  </div>
+  <button
+    class="tab active"
+    data-view="driver"
+  >
+    📱 Motorista
+  </button>
 
-  <section id="driver" class="view active">
+  <button
+    class="tab"
+    data-view="admin"
+  >
+    🖥️ Painel da unidade
+  </button>
 
-    <div class="grid">
+</div>
+
+<section
+  id="driver"
+  class="view active"
+>
+
+<div class="grid">
 
-      <div class="card c7">
+<div class="card c7">
 
-        <h2>Marcar chegada</h2>
+<h2>
+  Marcar chegada
+</h2>
 
-        <p class="help">
-          Autorize a localização, informe seus dados e aguarde ser chamado.
-        </p>
+<p class="help">
+  Autorize a localização, informe seus dados e aguarde ser chamado.
+</p>
 
-        <div class="row">
+<div class="row">
 
-          <div>
-            <label>Placa do cavalo</label>
-            <input id="plate" maxlength="8">
-          </div>
+<div>
 
-          <div>
-            <label>Código do dia</label>
-            <input
-              id="dailyCode"
-              maxlength="12"
-              inputmode="numeric"
-            >
-          </div>
+<label>
+  Placa do cavalo
+</label>
 
-        </div>
+<input
+  id="plate"
+  maxlength="8"
+>
 
-        <label>Nome do motorista</label>
-        <input id="driverName" maxlength="120">
+</div>
 
-        <label>Transportadora</label>
-        <input id="carrier" maxlength="160">
+<div>
 
-        <div id="locationBox" class="message warn">
+<label>
+  Código do dia
+</label>
 
-          <strong>
-            📍 Localização ainda não verificada.
-          </strong>
+<input
+  id="dailyCode"
+  maxlength="12"
+  inputmode="numeric"
+>
 
-          <div class="help">
-            Clique no botão abaixo e permita o acesso do navegador.
-          </div>
+</div>
 
-        </div>
+</div>
 
-        <button
-          class="btn primary block"
-          id="locationBtn"
-        >
-          📍 Usar minha localização
-        </button>
+<label>
+  Nome do motorista
+</label>
 
-        <button
-          class="btn success block"
-          id="submitBtn"
-        >
-          ✅ Marcar chegada
-        </button>
+<input
+  id="driverName"
+  maxlength="120"
+>
 
-        <button
-          class="btn dark block"
-          id="installAppBtn"
-        >
-          📲 Instalar aplicativo
-        </button>
+<label>
+  Transportadora
+</label>
 
-        <div id="installAppMessage"></div>
-        <div id="driverMessage"></div>
+<input
+  id="carrier"
+  maxlength="160"
+>
 
-      </div>
+<div
+  id="locationBox"
+  class="message warn"
+>
 
-      <div class="card c5">
+<strong>
+  📍 Localização ainda não verificada.
+</strong>
 
-        <h3>Regras da marcação</h3>
+<div class="help">
+  Clique no botão abaixo e permita o acesso do navegador.
+</div>
 
-        <ol class="help">
-          <li>
-            É obrigatório estar dentro do raio da unidade.
-          </li>
+</div>
 
-          <li>
-            O código do dia deve estar correto.
-          </li>
+<button
+  class="btn primary block"
+  id="locationBtn"
+>
+  📍 Usar minha localização
+</button>
+
+<button
+  class="btn success block"
+  id="submitBtn"
+>
+  ✅ Marcar chegada
+</button>
 
-          <li>
-            A placa não pode estar ativa duas vezes.
-          </li>
+<button
+  class="btn dark block"
+  id="installAppBtn"
+>
+  📲 Instalar aplicativo
+</button>
 
-          <li>
-            O mesmo aparelho pode ser limitado a uma placa ativa.
-          </li>
+<div id="installAppMessage"></div>
+<div id="driverMessage"></div>
 
-          <li>
-            Mantenha o aplicativo aberto enquanto estiver aguardando.
-          </li>
-        </ol>
+</div>
 
-        <div id="ticket" class="ticket hidden">
+<div class="card c5">
 
-          <div class="help">
-            Sua posição atual
-          </div>
+<h3>
+  Regras da marcação
+</h3>
 
-          <div id="position" class="number">
-            --
-          </div>
+<ol class="help">
 
-          <strong id="ticketPlate"></strong>
+<li>
+  É obrigatório estar dentro do raio da unidade.
+</li>
 
-          <p id="ticketStatus" class="help"></p>
+<li>
+  O código do dia deve estar correto.
+</li>
+
+<li>
+  A placa não pode estar ativa duas vezes.
+</li>
 
-          <div
-            id="ticketAhead"
-            class="ahead-count hidden"
-          ></div>
+<li>
+  O mesmo aparelho pode ser limitado a uma placa ativa.
+</li>
 
-          <div
-            id="ticketPresence"
-            class="presence-ticket presence-pending"
-          >
+<li>
+  Mantenha o aplicativo aberto enquanto estiver aguardando.
+</li>
 
-            <strong>
-              📍 Verificando presença...
-            </strong>
+</ol>
 
-            <div class="help">
-              Aguarde a atualização da localização.
-            </div>
+<div
+  id="ticket"
+  class="ticket hidden"
+>
 
-          </div>
+<div class="help">
+  Sua posição atual
+</div>
+
+<div
+  id="position"
+  class="number"
+>
+  --
+</div>
+
+<strong id="ticketPlate"></strong>
+
+<p
+  id="ticketStatus"
+  class="help"
+></p>
+
+<div
+  id="ticketAhead"
+  class="ahead-count hidden"
+></div>
+
+<div
+  id="ticketAheadPlates"
+  class="ahead-plates hidden"
+></div>
+
+<div
+  id="ticketPresence"
+  class="presence-ticket presence-pending"
+>
 
-        </div>
+<strong>
+  📍 Verificando presença...
+</strong>
 
-      </div>
+<div class="help">
+  Aguarde a atualização da localização.
+</div>
 
-    </div>
+</div>
 
-  </section>
+</div>
 
-  <section id="admin" class="view">
+</div>
 
-    <div id="loginBox" class="card login">
+</div>
 
-      <h2>🔒 Acesso ao painel</h2>
+</section>
 
-      <label>
-        Senha administrativa
-      </label>
+<section
+  id="admin"
+  class="view"
+>
+
+<div
+  id="loginBox"
+  class="card login"
+>
+
+<h2>
+  🔒 Acesso ao painel
+</h2>
+
+<label>
+  Senha administrativa
+</label>
 
-      <input
-        id="adminPassword"
-        type="password"
-      >
+<input
+  id="adminPassword"
+  type="password"
+>
 
-      <button
-        id="loginBtn"
-        class="btn dark block"
-      >
-        Entrar
-      </button>
+<button
+  id="loginBtn"
+  class="btn dark block"
+>
+  Entrar
+</button>
 
-      <div id="loginMessage"></div>
+<div id="loginMessage"></div>
+
+</div>
+
+<div
+  id="adminArea"
+  class="hidden"
+>
 
-    </div>
+<div class="summary">
 
-    <div id="adminArea" class="hidden">
+<div class="mini">
+  <span class="help">
+    Aguardando
+  </span>
+  <b id="sumWait">0</b>
+</div>
 
-      <div class="summary">
+<div class="mini">
+  <span class="help">
+    Chamados
+  </span>
+  <b id="sumCall">0</b>
+</div>
 
-        <div class="mini">
-          <span class="help">
-            Aguardando
-          </span>
-          <b id="sumWait">0</b>
-        </div>
+<div class="mini">
+  <span class="help">
+    Na balança
+  </span>
+  <b id="sumScale">0</b>
+</div>
 
-        <div class="mini">
-          <span class="help">
-            Chamados
-          </span>
-          <b id="sumCall">0</b>
-        </div>
+<div class="mini">
+  <span class="help">
+    Finalizados
+  </span>
+  <b id="sumDone">0</b>
+</div>
 
-        <div class="mini">
-          <span class="help">
-            Na balança
-          </span>
-          <b id="sumScale">0</b>
-        </div>
+</div>
 
-        <div class="mini">
-          <span class="help">
-            Finalizados
-          </span>
-          <b id="sumDone">0</b>
-        </div>
+<div class="grid">
 
-      </div>
+<div class="card queue-card">
 
-      <div class="grid">
+<div class="head">
 
-        <div class="card queue-card">
+<div>
 
-          <div class="head">
+<h2 style="margin-bottom:4px">
+  Fila atual
+</h2>
 
-            <div>
+<span class="help">
+  Atualização automática. Cadastros anteriores à V15 não serão bloqueados.
+</span>
 
-              <h2 style="margin-bottom:4px">
-                Fila atual
-              </h2>
+</div>
 
-              <span class="help">
-                Atualização automática. Cadastros anteriores à V15 não serão bloqueados.
-              </span>
+<div class="actions">
 
-            </div>
+<button
+  id="refreshBtn"
+  class="btn secondary small"
+>
+  🔄 Atualizar
+</button>
 
-            <div class="actions">
+<button
+  id="clearFinishedBtn"
+  class="btn secondary small"
+>
+  Limpar finalizados
+</button>
 
-              <button
-                id="refreshBtn"
-                class="btn secondary small"
-              >
-                🔄 Atualizar
-              </button>
+<button
+  id="clearAllBtn"
+  class="btn danger small"
+>
+  Limpar tudo
+</button>
 
-              <button
-                id="clearFinishedBtn"
-                class="btn secondary small"
-              >
-                Limpar finalizados
-              </button>
+</div>
 
-              <button
-                id="clearAllBtn"
-                class="btn danger small"
-              >
-                Limpar tudo
-              </button>
+</div>
 
-            </div>
+<div class="table-wrap">
 
-          </div>
+<table>
 
-          <div class="table-wrap">
+<thead>
 
-            <table>
+<tr>
+  <th>Fila</th>
+  <th>Placa</th>
+  <th>Motorista</th>
+  <th>Transportadora</th>
+  <th>Chegada</th>
+  <th>Distância</th>
+  <th>Presença</th>
+  <th>Situação</th>
+  <th>Ações</th>
+</tr>
 
-              <thead>
+</thead>
 
-                <tr>
-                  <th>Fila</th>
-                  <th>Placa</th>
-                  <th>Motorista</th>
-                  <th>Transportadora</th>
-                  <th>Chegada</th>
-                  <th>Distância</th>
-                  <th>Presença</th>
-                  <th>Situação</th>
-                  <th>Ações</th>
-                </tr>
+<tbody id="queueBody"></tbody>
 
-              </thead>
+</table>
 
-              <tbody id="queueBody"></tbody>
+</div>
 
-            </table>
+</div>
 
-          </div>
+<div class="card qr-card">
 
-        </div>
+<h2>
+  QR Code
+</h2>
 
-        <div class="card qr-card">
+<p class="help">
+  Imprima este código e coloque na entrada da unidade.
+</p>
 
-          <h2>QR Code</h2>
+<div class="qr">
+  <div id="qrcode"></div>
+</div>
 
-          <p class="help">
-            Imprima este código e coloque na entrada da unidade.
-          </p>
+<button
+  id="printQrBtn"
+  class="btn primary block"
+>
+  🖨️ Imprimir QR
+</button>
 
-          <div class="qr">
-            <div id="qrcode"></div>
-          </div>
+</div>
 
-          <button
-            id="printQrBtn"
-            class="btn primary block"
-          >
-            🖨️ Imprimir QR
-          </button>
+<div class="card settings-card">
 
-        </div>
+<h2>
+  Configuração da unidade
+</h2>
 
-        <div class="card settings-card">
+<div class="row">
 
-          <h2>Configuração da unidade</h2>
+<div>
 
-          <div class="row">
+<label>
+  Nome da unidade
+</label>
 
-            <div>
+<input id="unitName">
 
-              <label>
-                Nome da unidade
-              </label>
+</div>
 
-              <input id="unitName">
+<div>
 
-            </div>
+<label>
+  Código do dia
+</label>
 
-            <div>
+<input
+  id="configCode"
+  maxlength="12"
+>
 
-              <label>
-                Código do dia
-              </label>
+</div>
 
-              <input
-                id="configCode"
-                maxlength="12"
-              >
+</div>
 
-            </div>
+<div class="row">
 
-          </div>
+<div>
 
-          <div class="row">
+<label>
+  Latitude
+</label>
 
-            <div>
+<input
+  id="unitLat"
+  type="number"
+  step="any"
+>
 
-              <label>
-                Latitude
-              </label>
+</div>
 
-              <input
-                id="unitLat"
-                type="number"
-                step="any"
-              >
+<div>
 
-            </div>
+<label>
+  Longitude
+</label>
 
-            <div>
+<input
+  id="unitLon"
+  type="number"
+  step="any"
+>
 
-              <label>
-                Longitude
-              </label>
+</div>
 
-              <input
-                id="unitLon"
-                type="number"
-                step="any"
-              >
+</div>
 
-            </div>
+<div class="row">
 
-          </div>
+<div>
 
-          <div class="row">
+<label>
+  Raio permitido em metros
+</label>
 
-            <div>
+<input
+  id="radiusM"
+  type="number"
+  min="20"
+  max="10000"
+>
 
-              <label>
-                Raio permitido em metros
-              </label>
+</div>
 
-              <input
-                id="radiusM"
-                type="number"
-                min="20"
-                max="10000"
-              >
+<div>
 
-            </div>
+<label style="margin-bottom:12px">
+  Controle por aparelho
+</label>
 
-            <div>
+<label style="font-weight:normal">
 
-              <label style="margin-bottom:12px">
-                Controle por aparelho
-              </label>
+<input
+  id="blockDevice"
+  type="checkbox"
+  style="width:auto"
+>
 
-              <label style="font-weight:normal">
+Bloquear mais de uma placa ativa no mesmo aparelho
 
-                <input
-                  id="blockDevice"
-                  type="checkbox"
-                  style="width:auto"
-                >
+</label>
 
-                Bloquear mais de uma placa ativa no mesmo aparelho
+</div>
 
-              </label>
+</div>
 
-            </div>
+<div class="message ok">
 
-          </div>
+<strong>
+  📍 Verificação periódica V15
+</strong>
 
-          <div class="message ok">
+<div class="help">
+  Atualização a cada 60 segundos,
+  localização antiga após 3 minutos
+  e tolerância de 5 minutos fora do raio.
+</div>
 
-            <strong>
-              📍 Verificação periódica V15
-            </strong>
+</div>
 
-            <div class="help">
-              Atualização a cada 60 segundos,
-              localização antiga após 3 minutos
-              e tolerância de 5 minutos fora do raio.
-            </div>
+<div class="actions">
 
-          </div>
+<button
+  id="useUnitLocationBtn"
+  class="btn secondary"
+>
+  📍 Usar localização deste aparelho
+</button>
 
-          <div class="actions">
+<button
+  id="newCodeBtn"
+  class="btn warning"
+>
+  🔢 Novo código
+</button>
 
-            <button
-              id="useUnitLocationBtn"
-              class="btn secondary"
-            >
-              📍 Usar localização deste aparelho
-            </button>
+<button
+  id="saveSettingsBtn"
+  class="btn primary"
+>
+  💾 Salvar
+</button>
 
-            <button
-              id="newCodeBtn"
-              class="btn warning"
-            >
-              🔢 Novo código
-            </button>
+</div>
 
-            <button
-              id="saveSettingsBtn"
-              class="btn primary"
-            >
-              💾 Salvar
-            </button>
+<div id="settingsMessage"></div>
 
-          </div>
+</div>
 
-          <div id="settingsMessage"></div>
+<div class="card c12">
 
-        </div>
+<h2>
+  Inclusão manual
+</h2>
 
-        <div class="card c12">
+<p class="help">
+  Para motorista sem celular ou quando o GPS falhar.
+</p>
 
-          <h2>Inclusão manual</h2>
+<div class="row">
 
-          <p class="help">
-            Para motorista sem celular ou quando o GPS falhar.
-          </p>
+<div>
 
-          <div class="row">
+<label>
+  Placa
+</label>
 
-            <div>
+<input id="manualPlate">
 
-              <label>Placa</label>
+</div>
 
-              <input id="manualPlate">
+<div>
 
-            </div>
+<label>
+  Motorista
+</label>
 
-            <div>
+<input id="manualDriver">
 
-              <label>Motorista</label>
+</div>
 
-              <input id="manualDriver">
+</div>
 
-            </div>
+<label>
+  Transportadora
+</label>
 
-          </div>
+<input id="manualCarrier">
 
-          <label>Transportadora</label>
+<button
+  id="manualBtn"
+  class="btn dark block"
+>
+  Adicionar manualmente
+</button>
 
-          <input id="manualCarrier">
+<div id="manualMessage"></div>
 
-          <button
-            id="manualBtn"
-            class="btn dark block"
-          >
-            Adicionar manualmente
-          </button>
+</div>
 
-          <div id="manualMessage"></div>
+</div>
 
-        </div>
+</div>
 
-      </div>
+</section>
 
-    </div>
-
-  </section>
-
-  <div class="foot">
-    Sistema compartilhado com PostgreSQL no Railway • PWA V15.
-  </div>
+<div class="foot">
+  Sistema compartilhado com PostgreSQL no Railway • PWA V15.2.
+</div>
 
 </main>
 
@@ -1094,12 +1230,14 @@ let adminToken =
 let statusTimer = null;
 let adminTimer = null;
 
-let queueCache = new Map();
+let queueCache =
+  new Map();
 
 let chamadasEmAndamento =
   new Set();
 
-let installPromptEvent = null;
+let installPromptEvent =
+  null;
 
 let publicConfig = {
   presenceIntervalSeconds: 60,
@@ -1110,14 +1248,11 @@ let publicConfig = {
 
 let presenceTimer = null;
 let presenceBusy = false;
-
 let lastPresenceSentAt = 0;
-
 let monitoredQueueId = null;
 
 /*
- * NOVO:
- * evita que focus + visibilitychange + pageshow
+ * Evita que focus + visibilitychange + pageshow
  * façam várias verificações ao mesmo tempo.
  */
 let lastAppWakeAt = 0;
@@ -1127,6 +1262,7 @@ function esc(value) {
     value ?? ""
   ).replace(
     /[&<>'"]/g,
+
     (character) => ({
       "&": "&amp;",
       "<": "&lt;",
@@ -1145,7 +1281,9 @@ function msg(
 ) {
   $(id).innerHTML = `
     <div class="message ${type}">
-      <strong>${esc(title)}</strong>
+      <strong>
+        ${esc(title)}
+      </strong>
 
       ${
         text
@@ -1274,20 +1412,37 @@ function formatDate(value) {
 
 function statusName(status) {
   return ({
-    aguardando: "Aguardando",
-    chamado: "Chamado",
-    balanca: "Na balança",
-    finalizado: "Finalizado"
+    aguardando:
+      "Aguardando",
+
+    chamado:
+      "Chamado",
+
+    balanca:
+      "Na balança",
+
+    finalizado:
+      "Finalizado"
+
   })[status] || status;
 }
 
 function statusPill(status) {
   const className = ({
-    aguardando: "p-wait",
-    chamado: "p-call",
-    balanca: "p-scale",
-    finalizado: "p-done"
-  })[status] || "p-wait";
+    aguardando:
+      "p-wait",
+
+    chamado:
+      "p-call",
+
+    balanca:
+      "p-scale",
+
+    finalizado:
+      "p-done"
+
+  })[status] ||
+    "p-wait";
 
   return `
     <span class="pill ${className}">
@@ -1339,8 +1494,9 @@ function presenceIcon(state) {
   })[state] || "🔵";
 }
 
-function presenceHtml(presence) {
-
+function presenceHtml(
+  presence
+) {
   if (!presence) {
     return `
       <span class="pill presence-pending">
@@ -1360,6 +1516,7 @@ function presenceHtml(presence) {
       ${presenceIcon(
         presence.state
       )}
+
       ${esc(
         presence.label
       )}
@@ -1367,7 +1524,8 @@ function presenceHtml(presence) {
 
     <span class="presence-detail">
       ${esc(
-        presence.detail || ""
+        presence.detail ||
+        ""
       )}
     </span>
   `;
@@ -1395,6 +1553,7 @@ function updateTicketPresence(
   box.innerHTML = `
     <strong>
       ${presenceIcon(state)}
+
       ${esc(
         presence?.label ||
         "Verificando presença"
@@ -1411,9 +1570,7 @@ function updateTicketPresence(
 }
 
 function stopPresenceMonitoring() {
-
   if (presenceTimer) {
-
     clearInterval(
       presenceTimer
     );
@@ -1448,6 +1605,7 @@ async function sendPresenceNow(
   const minimumInterval =
     Math.max(
       30,
+
       Number(
         publicConfig
           .presenceIntervalSeconds ||
@@ -1457,6 +1615,7 @@ async function sendPresenceNow(
 
   if (
     !force &&
+
     Date.now() -
       lastPresenceSentAt <
       minimumInterval -
@@ -1472,14 +1631,13 @@ async function sendPresenceNow(
     .getCurrentPosition(
 
       async (position) => {
-
         try {
-
           const result =
             await api(
               `/api/queue/${id}/presence`,
               {
-                method: "POST",
+                method:
+                  "POST",
 
                 body:
                   JSON.stringify({
@@ -1513,6 +1671,7 @@ async function sendPresenceNow(
 
           if (
             result.active === false ||
+
             result.status !==
               "aguardando"
           ) {
@@ -1529,7 +1688,8 @@ async function sendPresenceNow(
           }
 
           updateTicketPresence({
-            state: "stale",
+            state:
+              "stale",
 
             label:
               "Não foi possível atualizar",
@@ -1539,19 +1699,18 @@ async function sendPresenceNow(
           });
 
         } finally {
-
           presenceBusy =
             false;
         }
       },
 
       (error) => {
-
         presenceBusy =
           false;
 
         updateTicketPresence({
-          state: "stale",
+          state:
+            "stale",
 
           label:
             "Localização não atualizada",
@@ -1563,9 +1722,14 @@ async function sendPresenceNow(
       },
 
       {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 15000
+        enableHighAccuracy:
+          true,
+
+        timeout:
+          20000,
+
+        maximumAge:
+          15000
       }
     );
 }
@@ -1575,6 +1739,7 @@ function startPresenceMonitoring(
 ) {
   if (
     !data?.presenceRequired ||
+
     data.status !==
       "aguardando"
   ) {
@@ -1606,6 +1771,7 @@ function startPresenceMonitoring(
     const interval =
       Math.max(
         30,
+
         Number(
           publicConfig
             .presenceIntervalSeconds ||
@@ -1623,10 +1789,6 @@ function startPresenceMonitoring(
       );
   }
 
-  /*
-   * Mantemos a atualização imediata
-   * quando o monitoramento é iniciado.
-   */
   if (
     Date.now() -
       lastPresenceSentAt >
@@ -1654,7 +1816,8 @@ document
             )
             .forEach(
               (item) => {
-                item.classList
+                item
+                  .classList
                   .remove(
                     "active"
                   );
@@ -1667,27 +1830,34 @@ document
             )
             .forEach(
               (item) => {
-                item.classList
+                item
+                  .classList
                   .remove(
                     "active"
                   );
               }
             );
 
-          button.classList
+          button
+            .classList
             .add(
               "active"
             );
 
           $(
-            button.dataset.view
-          ).classList.add(
-            "active"
-          );
+            button
+              .dataset
+              .view
+          )
+            .classList
+            .add(
+              "active"
+            );
 
           if (
             button.dataset.view ===
               "admin" &&
+
             adminToken
           ) {
             openAdmin();
@@ -1698,7 +1868,6 @@ document
 
 $("plate").oninput =
   (event) => {
-
     event.target.value =
       plate(
         event.target.value
@@ -1707,7 +1876,6 @@ $("plate").oninput =
 
 $("manualPlate").oninput =
   (event) => {
-
     event.target.value =
       plate(
         event.target.value
@@ -1716,7 +1884,6 @@ $("manualPlate").oninput =
 
 async function loadPublic() {
   try {
-
     const config =
       await api(
         "/api/public-config"
@@ -1735,7 +1902,6 @@ async function loadPublic() {
       `Fila - ${config.unitName}`;
 
   } catch {
-
     $("unitHeader")
       .textContent =
       "Unidade de Carregamento";
@@ -1808,11 +1974,11 @@ $("locationBtn").onclick =
             `;
 
           $("driverMessage")
-            .innerHTML = "";
+            .innerHTML =
+            "";
         },
 
         (error) => {
-
           msg(
             "driverMessage",
             "bad",
@@ -1840,7 +2006,6 @@ $("submitBtn").onclick =
     try {
 
       if (!currentLocation) {
-
         throw new Error(
           "Autorize a localização antes de marcar."
         );
@@ -1948,31 +2113,130 @@ function updateAheadCount(
   if (
     data.status !==
       "aguardando" ||
+
     !Number.isInteger(
       position
     ) ||
+
     position < 1
   ) {
     return;
   }
 
-  if (position === 1) {
-
+  if (
+    position === 1
+  ) {
     box.textContent =
       "Você é o próximo da fila. Fique atento à chamada no WhatsApp.";
 
   } else if (
     position === 2
   ) {
-
     box.textContent =
       "Falta 1 caminhão na sua frente.";
 
   } else {
-
     box.textContent =
       `Faltam ${position - 1} caminhões na sua frente.`;
   }
+
+  box.classList.remove(
+    "hidden"
+  );
+}
+
+/*
+ * =========================================================
+ * V15.2
+ *
+ * MOSTRA AS DUAS PLACAS IMEDIATAMENTE À FRENTE
+ * =========================================================
+ */
+function updateAheadPlates(
+  data
+) {
+  const box =
+    $("ticketAheadPlates");
+
+  if (!box) {
+    return;
+  }
+
+  box.classList.add(
+    "hidden"
+  );
+
+  box.innerHTML =
+    "";
+
+  if (
+    data.status !==
+      "aguardando"
+  ) {
+    return;
+  }
+
+  const aheadPlates =
+    Array.isArray(
+      data.aheadPlates
+    )
+      ? data.aheadPlates
+      : [];
+
+  if (
+    aheadPlates.length ===
+    0
+  ) {
+    return;
+  }
+
+  const rows =
+    aheadPlates
+      .map(
+        (item) => {
+
+          const queuePosition =
+            Number(
+              item.position
+            );
+
+          const positionText =
+            Number.isInteger(
+              queuePosition
+            ) &&
+            queuePosition > 0
+              ? `${queuePosition}º na fila`
+              : "À sua frente";
+
+          return `
+            <div class="ahead-plate-row">
+
+              <span class="ahead-plate-position">
+                ${esc(positionText)}
+              </span>
+
+              <span class="ahead-plate-number">
+                ${esc(
+                  item.plate ||
+                  ""
+                )}
+              </span>
+
+            </div>
+          `;
+        }
+      )
+      .join(
+        ""
+      );
+
+  box.innerHTML = `
+    <div class="ahead-plates-title">
+      🚛 Placas logo à sua frente
+    </div>
+
+    ${rows}
+  `;
 
   box.classList.remove(
     "hidden"
@@ -2007,12 +2271,15 @@ function showTicket(
     data
   );
 
+  updateAheadPlates(
+    data
+  );
+
   updateTicketPresence(
     data.presence
   );
 
   if (!statusTimer) {
-
     statusTimer =
       setInterval(
         checkMyStatus,
@@ -2026,9 +2293,8 @@ function showTicket(
 
   if (
     data.status ===
-    "finalizado"
+      "finalizado"
   ) {
-
     clearInterval(
       statusTimer
     );
@@ -2040,14 +2306,7 @@ function showTicket(
   }
 }
 
-/*
- * ALTERADO:
- * agora devolve os dados para que
- * atualizarAoAbrirApp saiba se esse
- * cadastro utiliza presença V15.
- */
 async function checkMyStatus() {
-
   const id =
     localStorage.getItem(
       "fila_last_id"
@@ -2076,7 +2335,6 @@ async function checkMyStatus() {
       error.status ===
       404
     ) {
-
       if (statusTimer) {
         clearInterval(
           statusTimer
@@ -2094,18 +2352,14 @@ async function checkMyStatus() {
 }
 
 /*
- * NOVO:
+ * Toda vez que um motorista já cadastrado
+ * abre ou volta para o app:
  *
- * Sempre que um motorista que JÁ ESTÁ
- * cadastrado abrir ou voltar para o app:
- *
- * 1 - recuperamos o cadastro;
- * 2 - atualizamos sua posição;
- * 3 - verificamos se ele é V15;
- * 4 - pedimos uma nova localização;
- * 5 - enviamos ao mesmo registro.
- *
- * Não cria uma nova entrada na fila.
+ * 1 - recupera o cadastro;
+ * 2 - atualiza posição;
+ * 3 - atualiza placas à frente;
+ * 4 - verifica presença;
+ * 5 - tenta enviar GPS atualizado.
  */
 async function atualizarAoAbrirApp() {
 
@@ -2118,20 +2372,13 @@ async function atualizarAoAbrirApp() {
     return;
   }
 
-  /*
-   * visibilitychange, focus e pageshow
-   * podem acontecer quase juntos.
-   *
-   * Isso impede três leituras de GPS
-   * ao mesmo tempo.
-   */
   const now =
     Date.now();
 
   if (
     now -
       lastAppWakeAt <
-    2000
+      2000
   ) {
     return;
   }
@@ -2142,30 +2389,16 @@ async function atualizarAoAbrirApp() {
   const data =
     await checkMyStatus();
 
-  /*
-   * Cadastro anterior,
-   * inclusão manual,
-   * chamado,
-   * balança ou finalizado
-   * não precisam atualizar presença.
-   */
   if (
     !data ||
     !data.presenceRequired ||
+
     data.status !==
       "aguardando"
   ) {
     return;
   }
 
-  /*
-   * checkMyStatus -> showTicket ->
-   * startPresenceMonitoring também pode
-   * iniciar uma leitura.
-   *
-   * Esperamos um pouco e só forçamos
-   * outra se nenhuma acabou de ser enviada.
-   */
   setTimeout(
     () => {
 
@@ -2175,7 +2408,8 @@ async function atualizarAoAbrirApp() {
         );
 
       if (
-        currentId !== id
+        currentId !==
+        id
       ) {
         return;
       }
@@ -2183,7 +2417,7 @@ async function atualizarAoAbrirApp() {
       if (
         Date.now() -
           lastPresenceSentAt >
-        5000
+          5000
       ) {
         sendPresenceNow(
           true
@@ -2195,11 +2429,6 @@ async function atualizarAoAbrirApp() {
   );
 }
 
-/*
- * ALTERADO:
- * não dependemos mais de monitoredQueueId
- * para tentar recuperar o motorista.
- */
 document.addEventListener(
   "visibilitychange",
   () => {
@@ -2212,10 +2441,6 @@ document.addEventListener(
   }
 );
 
-/*
- * ALTERADO:
- * quando o app ganha foco novamente.
- */
 window.addEventListener(
   "focus",
   () => {
@@ -2223,11 +2448,6 @@ window.addEventListener(
   }
 );
 
-/*
- * NOVO:
- * importante quando Android/iPhone
- * restaura o PWA da memória.
- */
 window.addEventListener(
   "pageshow",
   () => {
@@ -2343,27 +2563,40 @@ async function loadSettings() {
     await api(
       "/api/admin/settings",
       {
-        admin: true
+        admin:
+          true
       }
     );
 
-  $("unitName").value =
-    settings.unit_name;
+  $("unitName")
+    .value =
+    settings
+      .unit_name;
 
-  $("configCode").value =
-    settings.daily_code;
+  $("configCode")
+    .value =
+    settings
+      .daily_code;
 
-  $("unitLat").value =
-    settings.latitude;
+  $("unitLat")
+    .value =
+    settings
+      .latitude;
 
-  $("unitLon").value =
-    settings.longitude;
+  $("unitLon")
+    .value =
+    settings
+      .longitude;
 
-  $("radiusM").value =
-    settings.radius_m;
+  $("radiusM")
+    .value =
+    settings
+      .radius_m;
 
-  $("blockDevice").checked =
-    settings.block_device;
+  $("blockDevice")
+    .checked =
+    settings
+      .block_device;
 }
 
 $("saveSettingsBtn").onclick =
@@ -2452,7 +2685,8 @@ $("newCodeBtn").onclick =
           }
         );
 
-      $("configCode").value =
+      $("configCode")
+        .value =
         data.dailyCode;
 
       msg(
@@ -2491,12 +2725,14 @@ $("useUnitLocationBtn").onclick =
 
         (position) => {
 
-          $("unitLat").value =
+          $("unitLat")
+            .value =
             position
               .coords
               .latitude;
 
-          $("unitLon").value =
+          $("unitLon")
+            .value =
             position
               .coords
               .longitude;
@@ -2529,6 +2765,15 @@ $("useUnitLocationBtn").onclick =
       );
   };
 
+/*
+ * =========================================================
+ * PAINEL ADMINISTRATIVO V15.2
+ *
+ * A coluna "Fila" conta somente AGUARDANDO.
+ *
+ * CHAMADO / BALANÇA / FINALIZADO aparecem com —
+ * =========================================================
+ */
 async function loadQueue() {
 
   try {
@@ -2558,37 +2803,37 @@ async function loadQueue() {
     body.innerHTML =
       "";
 
-    let activeNumber =
+    let waitingNumber =
       0;
 
     rows.forEach(
       (row) => {
 
-        if (
-          row.status !==
-          "finalizado"
-        ) {
-          activeNumber +=
-            1;
-        }
+        let number =
+          "—";
 
-        const number =
+        if (
           row.status ===
-            "finalizado"
-            ? "—"
-            : String(
-                activeNumber
-              ).padStart(
-                2,
-                "0"
-              );
+            "aguardando"
+        ) {
+          waitingNumber +=
+            1;
+
+          number =
+            String(
+              waitingNumber
+            ).padStart(
+              2,
+              "0"
+            );
+        }
 
         let callButton =
           "";
 
         if (
           row.status ===
-          "aguardando"
+            "aguardando"
         ) {
 
           const warning =
@@ -2611,7 +2856,7 @@ async function loadQueue() {
 
         } else if (
           row.status ===
-          "chamado"
+            "chamado"
         ) {
 
           callButton = `
@@ -2698,6 +2943,7 @@ async function loadQueue() {
                   row.manual
                     ? `
                       <br>
+
                       <span class="pill p-manual">
                         Manual
                       </span>
@@ -2728,7 +2974,7 @@ async function loadQueue() {
               <td>
                 ${
                   row.distance_m ==
-                  null
+                    null
 
                     ? "—"
 
@@ -2769,6 +3015,7 @@ async function loadQueue() {
 
       body.innerHTML = `
         <tr>
+
           <td
             colspan="9"
             style="text-align:center;padding:28px"
@@ -2776,36 +3023,41 @@ async function loadQueue() {
           >
             Nenhum caminhão registrado.
           </td>
+
         </tr>
       `;
     }
 
-    $("sumWait").textContent =
+    $("sumWait")
+      .textContent =
       rows.filter(
         (row) =>
           row.status ===
-          "aguardando"
+            "aguardando"
       ).length;
 
-    $("sumCall").textContent =
+    $("sumCall")
+      .textContent =
       rows.filter(
         (row) =>
           row.status ===
-          "chamado"
+            "chamado"
       ).length;
 
-    $("sumScale").textContent =
+    $("sumScale")
+      .textContent =
       rows.filter(
         (row) =>
           row.status ===
-          "balanca"
+            "balanca"
       ).length;
 
-    $("sumDone").textContent =
+    $("sumDone")
+      .textContent =
       rows.filter(
         (row) =>
           row.status ===
-          "finalizado"
+            "finalizado"
       ).length;
 
   } catch (error) {
@@ -2835,7 +3087,6 @@ window.callDriver =
       );
 
     if (!row) {
-
       alert(
         "Não foi possível localizar os dados do motorista."
       );
@@ -2845,9 +3096,8 @@ window.callDriver =
 
     if (
       row.status !==
-      "aguardando"
+        "aguardando"
     ) {
-
       alert(
         "Este motorista já foi chamado ou não está mais aguardando."
       );
@@ -2904,7 +3154,7 @@ window.callDriver =
       "FILA CARREGAMENTO AGREX SAMBAIBA";
 
     /*
-     * MENSAGEM PADRÃO MANTIDA.
+     * WHATSAPP MANTIDO EXATAMENTE.
      */
     const message =
       `*Placa:* ${row.plate}\n\n⚖️ *Dirija-se até a balança.*`;
@@ -2967,7 +3217,7 @@ window.callDriver =
 
         if (
           error.data?.code !==
-          "PRESENCE_BLOCKED"
+            "PRESENCE_BLOCKED"
         ) {
           throw error;
         }
@@ -3042,26 +3292,36 @@ window.callDriver =
 
       const payload =
         btoa(binary)
+
           .replace(
             /\+/g,
             "-"
           )
+
           .replace(
             /\//g,
             "_"
           )
+
           .replace(
             /=+$/,
             ""
           );
 
-      whatsappWindow.location.href =
+      whatsappWindow
+        .location
+        .href =
         `https://web.whatsapp.com/#fila=${payload}`;
 
       try {
         whatsappWindow.focus();
       } catch {}
 
+      /*
+       * Assim que status vira CHAMADO,
+       * a fila administrativa também
+       * recalcula a numeração.
+       */
       await loadQueue();
 
     } catch (error) {
@@ -3200,10 +3460,13 @@ $("clearAllBtn").onclick =
 async function clearQueue(
   scope
 ) {
+
   if (
     !confirm(
       scope === "all"
+
         ? "Apagar toda a fila?"
+
         : "Apagar somente os finalizados?"
     )
   ) {
@@ -3266,13 +3529,16 @@ $("manualBtn").onclick =
         }
       );
 
-      $("manualPlate").value =
+      $("manualPlate")
+        .value =
         "";
 
-      $("manualDriver").value =
+      $("manualDriver")
+        .value =
         "";
 
-      $("manualCarrier").value =
+      $("manualCarrier")
+        .value =
         "";
 
       msg(
@@ -3302,7 +3568,9 @@ function makeQr() {
   area.innerHTML =
     "";
 
-  if (window.QRCode) {
+  if (
+    window.QRCode
+  ) {
 
     new QRCode(
       area,
@@ -3345,77 +3613,81 @@ $("printQrBtn").onclick =
         "_blank"
       );
 
-    printWindow.document.write(`
-      <html>
+    printWindow
+      .document
+      .write(`
+        <html>
 
-        <head>
+          <head>
 
-          <title>
-            QR da Fila
-          </title>
+            <title>
+              QR da Fila
+            </title>
 
-          <style>
+            <style>
 
-            body {
-              text-align: center;
-              font-family: Arial;
-              padding: 40px;
-            }
+              body {
+                text-align: center;
+                font-family: Arial;
+                padding: 40px;
+              }
 
-            .box {
-              display: inline-block;
-              border: 4px solid #111;
-              border-radius: 18px;
-              padding: 30px;
-            }
+              .box {
+                display: inline-block;
+                border: 4px solid #111;
+                border-radius: 18px;
+                padding: 30px;
+              }
 
-          </style>
+            </style>
 
-        </head>
+          </head>
 
-        <body>
+          <body>
 
-          <div class="box">
+            <div class="box">
 
-            <h1>
-              ${esc(
-                $("unitName")
-                  .value ||
-                "Fila de Carregamento"
-              )}
-            </h1>
+              <h1>
+                ${esc(
+                  $("unitName")
+                    .value ||
+                  "Fila de Carregamento"
+                )}
+              </h1>
 
-            <p>
-              Escaneie para marcar sua chegada
-            </p>
+              <p>
+                Escaneie para marcar sua chegada
+              </p>
 
-            <div
-              style="display:flex;justify-content:center"
-            >
-              ${qr}
+              <div
+                style="display:flex;justify-content:center"
+              >
+                ${qr}
+              </div>
+
+              <p>
+                <b>
+                  Autorize a localização e informe a placa.
+                </b>
+              </p>
+
             </div>
 
-            <p>
-              <b>
-                Autorize a localização e informe a placa.
-              </b>
-            </p>
+            <script>
+              setTimeout(
+                () => print(),
+                500
+              )
+            <\/script>
 
-          </div>
+          </body>
 
-          <script>
-            setTimeout(
-              () => print(),
-              500
-            )
-          <\/script>
+        </html>
+      `);
 
-        </body>
-
-      </html>
-    `);
-
-    printWindow.document.close();
+    printWindow
+      .document
+      .close();
   };
 
 function estaComoAplicativo() {
@@ -3427,7 +3699,8 @@ function estaComoAplicativo() {
       )
       .matches ||
 
-    window.navigator
+    window
+      .navigator
       .standalone ===
       true
   );
@@ -3535,7 +3808,7 @@ $("installAppBtn").onclick =
 
       if (
         choice.outcome ===
-        "accepted"
+          "accepted"
       ) {
 
         msg(
@@ -3596,10 +3869,12 @@ if (
         .register(
           "/service-worker.js"
         )
+
         .then(
           (registration) =>
             registration.update()
         )
+
         .catch(
           (error) => {
 
@@ -3623,14 +3898,8 @@ const lastId =
   );
 
 /*
- * ALTERADO:
- *
- * antes:
- * checkMyStatus();
- *
- * agora:
- * recupera o cadastro + posição +
- * força a atualização do GPS.
+ * Recupera cadastro, posição, placas
+ * à frente e localização ao abrir.
  */
 if (lastId) {
 
