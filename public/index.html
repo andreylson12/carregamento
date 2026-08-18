@@ -516,9 +516,11 @@
           <button class="btn primary block" id="locationBtn">
             📍 Usar minha localização
           </button>
+
           <button class="btn success block" id="submitBtn">
             ✅ Marcar chegada
           </button>
+
           <button class="btn dark block" id="installAppBtn">
             📲 Instalar aplicativo
           </button>
@@ -529,6 +531,7 @@
 
         <div class="card c5">
           <h3>Regras da marcação</h3>
+
           <ol class="help">
             <li>É obrigatório estar dentro do raio da unidade.</li>
             <li>O código do dia deve estar correto.</li>
@@ -542,11 +545,25 @@
             <div id="position" class="number">--</div>
             <strong id="ticketPlate"></strong>
             <p id="ticketStatus" class="help"></p>
-            <div id="ticketAhead" class="ahead-count hidden"></div>
-            <div id="ticketReview" class="review-box hidden"></div>
-            <div id="ticketPresence" class="presence-ticket presence-pending">
+
+            <div
+              id="ticketAhead"
+              class="ahead-count hidden"
+            ></div>
+
+            <div
+              id="ticketReview"
+              class="review-box hidden"
+            ></div>
+
+            <div
+              id="ticketPresence"
+              class="presence-ticket presence-pending"
+            >
               <strong>📍 Verificando presença...</strong>
-              <div class="help">Aguarde a atualização da localização.</div>
+              <div class="help">
+                Aguarde a atualização da localização.
+              </div>
             </div>
           </div>
         </div>
@@ -556,9 +573,17 @@
     <section id="admin" class="view">
       <div id="loginBox" class="card login">
         <h2>🔒 Acesso ao painel</h2>
+
         <label>Senha administrativa</label>
         <input id="adminPassword" type="password">
-        <button id="loginBtn" class="btn dark block">Entrar</button>
+
+        <button
+          id="loginBtn"
+          class="btn dark block"
+        >
+          Entrar
+        </button>
+
         <div id="loginMessage"></div>
       </div>
 
@@ -568,14 +593,17 @@
             <span class="help">Aguardando</span>
             <b id="sumWait">0</b>
           </div>
+
           <div class="mini">
             <span class="help">Chamados</span>
             <b id="sumCall">0</b>
           </div>
+
           <div class="mini">
             <span class="help">Na balança</span>
             <b id="sumScale">0</b>
           </div>
+
           <div class="mini">
             <span class="help">Finalizados</span>
             <b id="sumDone">0</b>
@@ -587,18 +615,31 @@
             <div class="head">
               <div>
                 <h2 style="margin-bottom:4px">Fila atual</h2>
+
                 <span class="help">
                   Atualização automática. Cadastros anteriores à V15 não serão bloqueados.
                 </span>
               </div>
+
               <div class="actions">
-                <button id="refreshBtn" class="btn secondary small">
+                <button
+                  id="refreshBtn"
+                  class="btn secondary small"
+                >
                   🔄 Atualizar
                 </button>
-                <button id="clearFinishedBtn" class="btn secondary small">
+
+                <button
+                  id="clearFinishedBtn"
+                  class="btn secondary small"
+                >
                   Limpar finalizados
                 </button>
-                <button id="clearAllBtn" class="btn danger small">
+
+                <button
+                  id="clearAllBtn"
+                  class="btn danger small"
+                >
                   Limpar tudo
                 </button>
               </div>
@@ -619,6 +660,7 @@
                     <th>Ações</th>
                   </tr>
                 </thead>
+
                 <tbody id="queueBody"></tbody>
               </table>
             </div>
@@ -626,11 +668,19 @@
 
           <div class="card qr-card">
             <h2>QR Code</h2>
+
             <p class="help">
               Imprima este código e coloque na entrada da unidade.
             </p>
-            <div class="qr"><div id="qrcode"></div></div>
-            <button id="printQrBtn" class="btn primary block">
+
+            <div class="qr">
+              <div id="qrcode"></div>
+            </div>
+
+            <button
+              id="printQrBtn"
+              class="btn primary block"
+            >
               🖨️ Imprimir QR
             </button>
           </div>
@@ -643,6 +693,7 @@
                 <label>Nome da unidade</label>
                 <input id="unitName">
               </div>
+
               <div>
                 <label>Código do dia</label>
                 <input id="configCode" maxlength="12">
@@ -652,23 +703,46 @@
             <div class="row">
               <div>
                 <label>Latitude</label>
-                <input id="unitLat" type="number" step="any">
+                <input
+                  id="unitLat"
+                  type="number"
+                  step="any"
+                >
               </div>
+
               <div>
                 <label>Longitude</label>
-                <input id="unitLon" type="number" step="any">
+                <input
+                  id="unitLon"
+                  type="number"
+                  step="any"
+                >
               </div>
             </div>
 
             <div class="row">
               <div>
                 <label>Raio permitido em metros</label>
-                <input id="radiusM" type="number" min="20" max="10000">
+
+                <input
+                  id="radiusM"
+                  type="number"
+                  min="20"
+                  max="10000"
+                >
               </div>
+
               <div>
-                <label style="margin-bottom:12px">Controle por aparelho</label>
+                <label style="margin-bottom:12px">
+                  Controle por aparelho
+                </label>
+
                 <label style="font-weight:normal">
-                  <input id="blockDevice" type="checkbox" style="width:auto">
+                  <input
+                    id="blockDevice"
+                    type="checkbox"
+                    style="width:auto"
+                  >
                   Bloquear mais de uma placa ativa no mesmo aparelho
                 </label>
               </div>
@@ -676,6 +750,7 @@
 
             <div class="message ok">
               <strong>📍 Verificação periódica V15</strong>
+
               <div class="help">
                 Atualização a cada 60 segundos, localização antiga após 3 minutos
                 e tolerância de 5 minutos fora do raio.
@@ -683,13 +758,24 @@
             </div>
 
             <div class="actions">
-              <button id="useUnitLocationBtn" class="btn secondary">
+              <button
+                id="useUnitLocationBtn"
+                class="btn secondary"
+              >
                 📍 Usar localização deste aparelho
               </button>
-              <button id="newCodeBtn" class="btn warning">
+
+              <button
+                id="newCodeBtn"
+                class="btn warning"
+              >
                 🔢 Novo código
               </button>
-              <button id="saveSettingsBtn" class="btn primary">
+
+              <button
+                id="saveSettingsBtn"
+                class="btn primary"
+              >
                 💾 Salvar
               </button>
             </div>
@@ -699,6 +785,7 @@
 
           <div class="card c12">
             <h2>Inclusão manual</h2>
+
             <p class="help">
               Para motorista sem celular ou quando o GPS falhar.
             </p>
@@ -708,6 +795,7 @@
                 <label>Placa</label>
                 <input id="manualPlate">
               </div>
+
               <div>
                 <label>Motorista</label>
                 <input id="manualDriver">
@@ -717,9 +805,13 @@
             <label>Transportadora</label>
             <input id="manualCarrier">
 
-            <button id="manualBtn" class="btn dark block">
+            <button
+              id="manualBtn"
+              class="btn dark block"
+            >
               Adicionar manualmente
             </button>
+
             <div id="manualMessage"></div>
           </div>
         </div>
@@ -727,7 +819,7 @@
     </section>
 
     <div class="foot">
-      Sistema compartilhado com PostgreSQL no Railway • PWA V15.3.3.
+      Sistema compartilhado com PostgreSQL no Railway • PWA V15.3.4.
     </div>
   </main>
 
@@ -785,11 +877,20 @@
     }
 
     function deviceId() {
-      let id = localStorage.getItem("fila_device_id");
+      let id =
+        localStorage.getItem(
+          "fila_device_id"
+        );
 
       if (!id) {
-        id = "dev-" + crypto.randomUUID();
-        localStorage.setItem("fila_device_id", id);
+        id =
+          "dev-" +
+          crypto.randomUUID();
+
+        localStorage.setItem(
+          "fila_device_id",
+          id
+        );
       }
 
       return id;
@@ -801,33 +902,53 @@
         ...(options.headers || {})
       };
 
-      if (options.admin && adminToken) {
-        headers.Authorization = `Bearer ${adminToken}`;
+      if (
+        options.admin &&
+        adminToken
+      ) {
+        headers.Authorization =
+          `Bearer ${adminToken}`;
       }
 
-      const response = await fetch(url, {
-        ...options,
-        headers
-      });
+      const response =
+        await fetch(
+          url,
+          {
+            ...options,
+            headers
+          }
+        );
 
       let data = {};
 
       try {
-        data = await response.json();
+        data =
+          await response.json();
       } catch {}
 
       if (!response.ok) {
-        if (response.status === 401 && options.admin) {
+        if (
+          response.status === 401 &&
+          options.admin
+        ) {
           adminToken = "";
-          localStorage.removeItem("fila_admin_token");
+
+          localStorage.removeItem(
+            "fila_admin_token"
+          );
         }
 
-        const error = new Error(
-          data.error || "Não foi possível concluir a operação."
-        );
+        const error =
+          new Error(
+            data.error ||
+            "Não foi possível concluir a operação."
+          );
 
-        error.status = response.status;
-        error.data = data;
+        error.status =
+          response.status;
+
+        error.data =
+          data;
 
         throw error;
       }
@@ -836,13 +957,16 @@
     }
 
     function formatDate(value) {
-      return new Date(value).toLocaleString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
+      return new Date(value).toLocaleString(
+        "pt-BR",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
     }
 
     function statusName(status) {
@@ -862,7 +986,11 @@
         finalizado: "p-done"
       })[status] || "p-wait";
 
-      return `<span class="pill ${className}">${statusName(status)}</span>`;
+      return `
+        <span class="pill ${className}">
+          ${statusName(status)}
+        </span>
+      `;
     }
 
     function presenceClass(state) {
@@ -896,32 +1024,49 @@
     function presenceHtml(presence) {
       if (!presence) {
         return `
-          <span class="pill presence-pending">🔵 Verificando</span>
-          <span class="presence-detail">Aguardando dados.</span>
+          <span class="pill presence-pending">
+            🔵 Verificando
+          </span>
+
+          <span class="presence-detail">
+            Aguardando dados.
+          </span>
         `;
       }
 
       return `
         <span class="pill ${presenceClass(presence.state)}">
-          ${presenceIcon(presence.state)} ${esc(presence.label)}
+          ${presenceIcon(presence.state)}
+          ${esc(presence.label)}
         </span>
-        <span class="presence-detail">${esc(presence.detail || "")}</span>
+
+        <span class="presence-detail">
+          ${esc(presence.detail || "")}
+        </span>
       `;
     }
 
     function updateTicketPresence(presence) {
-      const box = $("ticketPresence");
+      const box =
+        $("ticketPresence");
 
       if (!box) return;
 
-      const state = presence?.state || "pending";
+      const state =
+        presence?.state ||
+        "pending";
 
-      box.className = `presence-ticket ${presenceClass(state)}`;
+      box.className =
+        `presence-ticket ${presenceClass(state)}`;
 
       box.innerHTML = `
-        <strong>${presenceIcon(state)} ${esc(
-          presence?.label || "Verificando presença"
-        )}</strong>
+        <strong>
+          ${presenceIcon(state)}
+          ${esc(
+            presence?.label ||
+            "Verificando presença"
+          )}
+        </strong>
 
         <div class="help">
           ${esc(
@@ -934,7 +1079,10 @@
 
     function stopPresenceMonitoring() {
       if (presenceTimer) {
-        clearInterval(presenceTimer);
+        clearInterval(
+          presenceTimer
+        );
+
         presenceTimer = null;
       }
 
@@ -943,9 +1091,18 @@
     }
 
     async function sendPresenceNow(force = false) {
-      const id = localStorage.getItem("fila_last_id");
+      const id =
+        localStorage.getItem(
+          "fila_last_id"
+        );
 
-      if (!id || presenceBusy || !navigator.geolocation) return;
+      if (
+        !id ||
+        presenceBusy ||
+        !navigator.geolocation
+      ) {
+        return;
+      }
 
       const minimumInterval =
         Math.max(
@@ -958,8 +1115,10 @@
 
       if (
         !force &&
-        Date.now() - lastPresenceSentAt <
-        minimumInterval - 3000
+        Date.now() -
+        lastPresenceSentAt <
+        minimumInterval -
+        3000
       ) {
         return;
       }
@@ -969,21 +1128,31 @@
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           try {
-            const result = await api(
-              `/api/queue/${id}/presence`,
-              {
-                method: "POST",
+            const result =
+              await api(
+                `/api/queue/${id}/presence`,
+                {
+                  method: "POST",
 
-                body: JSON.stringify({
-                  deviceId: deviceId(),
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude,
-                  accuracy: position.coords.accuracy
-                })
-              }
-            );
+                  body:
+                    JSON.stringify({
+                      deviceId:
+                        deviceId(),
 
-            lastPresenceSentAt = Date.now();
+                      latitude:
+                        position.coords.latitude,
+
+                      longitude:
+                        position.coords.longitude,
+
+                      accuracy:
+                        position.coords.accuracy
+                    })
+                }
+              );
+
+            lastPresenceSentAt =
+              Date.now();
 
             updateTicketPresence(
               result.presence
@@ -1021,6 +1190,7 @@
           updateTicketPresence({
             state: "stale",
             label: "Localização não atualizada",
+
             detail:
               error.message ||
               "Abra o aplicativo e autorize a localização."
@@ -1051,8 +1221,11 @@
 
       if (!id) return;
 
-      if (monitoredQueueId !== id) {
+      if (
+        monitoredQueueId !== id
+      ) {
         stopPresenceMonitoring();
+
         monitoredQueueId = id;
       }
 
@@ -1068,7 +1241,8 @@
 
         presenceTimer =
           setInterval(
-            () => sendPresenceNow(false),
+            () =>
+              sendPresenceNow(false),
             interval
           );
       }
@@ -1082,40 +1256,58 @@
       }
     }
 
-    document.querySelectorAll(".tab").forEach((button) => {
-      button.onclick = () => {
-        document.querySelectorAll(".tab").forEach((item) => {
-          item.classList.remove("active");
-        });
+    document
+      .querySelectorAll(".tab")
+      .forEach((button) => {
+        button.onclick = () => {
+          document
+            .querySelectorAll(".tab")
+            .forEach((item) => {
+              item.classList.remove(
+                "active"
+              );
+            });
 
-        document.querySelectorAll(".view").forEach((item) => {
-          item.classList.remove("active");
-        });
+          document
+            .querySelectorAll(".view")
+            .forEach((item) => {
+              item.classList.remove(
+                "active"
+              );
+            });
 
-        button.classList.add("active");
+          button.classList.add(
+            "active"
+          );
 
-        $(button.dataset.view)
-          .classList
-          .add("active");
+          $(button.dataset.view)
+            .classList
+            .add("active");
 
-        if (
-          button.dataset.view === "admin" &&
-          adminToken
-        ) {
-          openAdmin();
-        }
+          if (
+            button.dataset.view === "admin" &&
+            adminToken
+          ) {
+            openAdmin();
+          }
+        };
+      });
+
+    $("plate").oninput =
+      (event) => {
+        event.target.value =
+          plate(
+            event.target.value
+          );
       };
-    });
 
-    $("plate").oninput = (event) => {
-      event.target.value =
-        plate(event.target.value);
-    };
-
-    $("manualPlate").oninput = (event) => {
-      event.target.value =
-        plate(event.target.value);
-    };
+    $("manualPlate").oninput =
+      (event) => {
+        event.target.value =
+          plate(
+            event.target.value
+          );
+      };
 
     async function loadPublic() {
       try {
@@ -1141,72 +1333,77 @@
       }
     }
 
-    $("locationBtn").onclick = () => {
-      msg(
-        "driverMessage",
-        "warn",
-        "Buscando localização",
-        "Aguarde a confirmação do navegador."
-      );
-
-      if (!navigator.geolocation) {
-        return msg(
+    $("locationBtn").onclick =
+      () => {
+        msg(
           "driverMessage",
-          "bad",
-          "GPS indisponível",
-          "Este navegador não oferece geolocalização."
+          "warn",
+          "Buscando localização",
+          "Aguarde a confirmação do navegador."
         );
-      }
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          currentLocation = {
-            latitude:
-              position.coords.latitude,
-
-            longitude:
-              position.coords.longitude,
-
-            accuracy:
-              position.coords.accuracy
-          };
-
-          $("locationBox").className =
-            "message ok";
-
-          $("locationBox").innerHTML = `
-            <strong>✅ Localização obtida.</strong>
-
-            <div class="help">
-              Precisão aproximada:
-              ${Math.round(
-                position.coords.accuracy
-              )} m.
-
-              A validação final será feita pelo servidor.
-            </div>
-          `;
-
-          $("driverMessage").innerHTML =
-            "";
-        },
-
-        (error) => {
-          msg(
+        if (
+          !navigator.geolocation
+        ) {
+          return msg(
             "driverMessage",
             "bad",
-            "Não foi possível obter a localização",
-            error.message
+            "GPS indisponível",
+            "Este navegador não oferece geolocalização."
           );
-        },
-
-        {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 0
         }
-      );
-    };
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            currentLocation = {
+              latitude:
+                position.coords.latitude,
+
+              longitude:
+                position.coords.longitude,
+
+              accuracy:
+                position.coords.accuracy
+            };
+
+            $("locationBox").className =
+              "message ok";
+
+            $("locationBox").innerHTML = `
+              <strong>
+                ✅ Localização obtida.
+              </strong>
+
+              <div class="help">
+                Precisão aproximada:
+                ${Math.round(
+                  position.coords.accuracy
+                )} m.
+
+                A validação final será feita pelo servidor.
+              </div>
+            `;
+
+            $("driverMessage").innerHTML =
+              "";
+          },
+
+          (error) => {
+            msg(
+              "driverMessage",
+              "bad",
+              "Não foi possível obter a localização",
+              error.message
+            );
+          },
+
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+          }
+        );
+      };
 
     $("submitBtn").onclick =
       async () => {
@@ -1226,35 +1423,36 @@
               {
                 method: "POST",
 
-                body: JSON.stringify({
-                  plate:
-                    plate(
-                      $("plate").value
-                    ),
+                body:
+                  JSON.stringify({
+                    plate:
+                      plate(
+                        $("plate").value
+                      ),
 
-                  dailyCode:
-                    $("dailyCode")
-                      .value
-                      .trim(),
+                    dailyCode:
+                      $("dailyCode")
+                        .value
+                        .trim(),
 
-                  driverName:
-                    $("driverName")
-                      .value
-                      .trim(),
+                    driverName:
+                      $("driverName")
+                        .value
+                        .trim(),
 
-                  carrier:
-                    $("carrier")
-                      .value
-                      .trim(),
+                    carrier:
+                      $("carrier")
+                        .value
+                        .trim(),
 
-                  deviceId:
-                    deviceId(),
+                    deviceId:
+                      deviceId(),
 
-                  presenceVersion:
-                    15,
+                    presenceVersion:
+                      15,
 
-                  ...currentLocation
-                })
+                    ...currentLocation
+                  })
               }
             );
 
@@ -1294,23 +1492,21 @@
         $("ticketAhead");
 
       const position =
-        Number(data.position);
+        Number(
+          data.position
+        );
 
       const aheadPlates =
         Array.isArray(
           data.aheadPlates
         )
-          ? data
-              .aheadPlates
+          ? data.aheadPlates
               .filter(
                 (item) =>
                   item &&
                   item.plate
               )
-              .slice(
-                0,
-                2
-              )
+              .slice(0, 2)
           : [];
 
       box.classList.add(
@@ -1345,7 +1541,9 @@
 
       let platesHtml = "";
 
-      if (aheadPlates.length) {
+      if (
+        aheadPlates.length
+      ) {
         platesHtml = `
           <div
             style="
@@ -1441,10 +1639,9 @@
               </strong>
 
               <div class="help">
-                O sistema detectou que esta marcação
-                ficou fora da área permitida.
-                Toque no botão abaixo para enviar
-                uma nova localização.
+                A unidade solicitou uma nova confirmação
+                da sua presença. Toque no botão abaixo
+                para enviar sua localização atual pelo GPS.
               </div>
 
               <button
@@ -1481,7 +1678,9 @@
         return;
       }
 
-      if (!navigator.geolocation) {
+      if (
+        !navigator.geolocation
+      ) {
         msg(
           "driverMessage",
           "bad",
@@ -1528,6 +1727,7 @@
 
             msg(
               "driverMessage",
+
               result.inside &&
               result.accurate
                 ? "ok"
@@ -1592,7 +1792,8 @@
         .remove("hidden");
 
       $("position").textContent =
-        data.position ?? "--";
+        data.position ??
+        "--";
 
       $("ticketPlate").textContent =
         data.plate;
@@ -1600,9 +1801,13 @@
       $("ticketStatus").textContent =
         `Situação: ${statusName(data.status)}.`;
 
-      updateAheadCount(data);
+      updateAheadCount(
+        data
+      );
 
-      updatePresenceReview(data);
+      updatePresenceReview(
+        data
+      );
 
       updateTicketPresence(
         data.presence
@@ -1905,7 +2110,9 @@
 
     $("useUnitLocationBtn").onclick =
       () => {
-        if (!navigator.geolocation) {
+        if (
+          !navigator.geolocation
+        ) {
           return msg(
             "settingsMessage",
             "bad",
@@ -2075,6 +2282,34 @@
             </button>
           `;
 
+          /*
+           * NOVO:
+           *
+           * Se a última localização estiver antiga,
+           * você pode solicitar uma confirmação
+           * diretamente para aquela marcação.
+           *
+           * Isso NÃO tira o caminhão da fila.
+           */
+          const requestPresenceButton =
+            row.status ===
+              "aguardando" &&
+            !row.manual &&
+            row.presence_required &&
+            row.presence &&
+            row.presence.state ===
+              "stale" &&
+            !row.presence.reviewRequired
+              ? `
+                  <button
+                    class="btn primary small"
+                    onclick="requestPresenceConfirmation('${row.id}')"
+                  >
+                    📍 Confirmar presença
+                  </button>
+                `
+              : "";
+
           const reviewButtons =
             row.status ===
               "aguardando" &&
@@ -2102,16 +2337,21 @@
             `
               <tr>
                 <td>
-                  <b>${number}</b>
+                  <b>
+                    ${number}
+                  </b>
                 </td>
 
                 <td>
-                  <b>${esc(row.plate)}</b>
+                  <b>
+                    ${esc(row.plate)}
+                  </b>
 
                   ${
                     row.manual
                       ? `
                           <br>
+
                           <span class="pill p-manual">
                             Manual
                           </span>
@@ -2121,15 +2361,21 @@
                 </td>
 
                 <td>
-                  ${esc(row.driver_name)}
+                  ${esc(
+                    row.driver_name
+                  )}
                 </td>
 
                 <td>
-                  ${esc(row.carrier)}
+                  ${esc(
+                    row.carrier
+                  )}
                 </td>
 
                 <td>
-                  ${formatDate(row.arrival_time)}
+                  ${formatDate(
+                    row.arrival_time
+                  )}
                 </td>
 
                 <td>
@@ -2141,15 +2387,20 @@
                 </td>
 
                 <td>
-                  ${presenceHtml(row.presence)}
+                  ${presenceHtml(
+                    row.presence
+                  )}
                 </td>
 
                 <td>
-                  ${statusPill(row.status)}
+                  ${statusPill(
+                    row.status
+                  )}
                 </td>
 
                 <td>
                   <div class="row-actions">
+                    ${requestPresenceButton}
                     ${reviewButtons}
                     ${callButton}
                     ${scaleButton}
@@ -2391,7 +2642,8 @@
             new TextEncoder()
               .encode(json);
 
-          let binary = "";
+          let binary =
+            "";
 
           for (
             const byte
@@ -2461,7 +2713,76 @@
           await loadQueue();
 
         } finally {
-          chamadasEmAndamento.delete(id);
+          chamadasEmAndamento.delete(
+            id
+          );
+        }
+      };
+
+    /*
+     * =========================================================
+     * SOLICITAR NOVA CONFIRMAÇÃO DE GPS
+     * =========================================================
+     *
+     * O caminhão continua na fila.
+     * O horário de chegada continua o mesmo.
+     *
+     * Apenas colocamos aquela marcação
+     * em confirmação de presença.
+     */
+    window.requestPresenceConfirmation =
+      async (id) => {
+        const row =
+          queueCache.get(id);
+
+        if (!row) {
+          alert(
+            "Não foi possível localizar este registro."
+          );
+
+          return;
+        }
+
+        if (
+          row.status !==
+          "aguardando"
+        ) {
+          alert(
+            "Esta placa não está mais aguardando na fila."
+          );
+
+          await loadQueue();
+
+          return;
+        }
+
+        const confirmed =
+          confirm(
+            `Solicitar uma nova confirmação de GPS para a placa ${row.plate}?\n\nO motorista continuará na fila enquanto a confirmação é analisada.`
+          );
+
+        if (!confirmed) {
+          return;
+        }
+
+        try {
+          await api(
+            `/api/admin/queue/${id}/request-presence`,
+            {
+              method: "POST",
+              admin: true,
+
+              body:
+                JSON.stringify({})
+            }
+          );
+
+          await loadQueue();
+
+        } catch (error) {
+          alert(
+            error.message
+          );
         }
       };
 
@@ -2625,17 +2946,14 @@
                 JSON.stringify({
                   plate:
                     plate(
-                      $("manualPlate")
-                        .value
+                      $("manualPlate").value
                     ),
 
                   driverName:
-                    $("manualDriver")
-                      .value,
+                    $("manualDriver").value,
 
                   carrier:
-                    $("manualCarrier")
-                      .value
+                    $("manualCarrier").value
                 })
             }
           );
@@ -2674,7 +2992,9 @@
       area.innerHTML =
         "";
 
-      if (window.QRCode) {
+      if (
+        window.QRCode
+      ) {
         new QRCode(
           area,
           {
@@ -2716,7 +3036,9 @@
         printWindow.document.write(`
           <html>
             <head>
-              <title>QR da Fila</title>
+              <title>
+                QR da Fila
+              </title>
 
               <style>
                 body {
@@ -2803,7 +3125,9 @@
 
       if (!button) return;
 
-      if (estaComoAplicativo()) {
+      if (
+        estaComoAplicativo()
+      ) {
         button.disabled =
           true;
 
@@ -2850,7 +3174,9 @@
 
     $("installAppBtn").onclick =
       async () => {
-        if (estaComoAplicativo()) {
+        if (
+          estaComoAplicativo()
+        ) {
           msg(
             "installAppMessage",
             "ok",
@@ -2861,7 +3187,9 @@
           return;
         }
 
-        if (installPromptEvent) {
+        if (
+          installPromptEvent
+        ) {
           const event =
             installPromptEvent;
 
@@ -2898,7 +3226,9 @@
           return;
         }
 
-        if (dispositivoIOS()) {
+        if (
+          dispositivoIOS()
+        ) {
           msg(
             "installAppMessage",
             "warn",
