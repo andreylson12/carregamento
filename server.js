@@ -613,6 +613,27 @@ function presenceSnapshot(
 
     maxAccuracyMeters:
       PRESENCE_MAX_ACCURACY_METERS,
+
+    reviewRequired:
+      Boolean(
+        row
+          .presence_review_required
+      ),
+
+    reviewStartedAt:
+      row
+        .presence_review_started_at ||
+      null,
+
+    confirmationRequestedAt:
+      row
+        .presence_confirmation_requested_at ||
+      null,
+
+    confirmationAnsweredAt:
+      row
+        .presence_confirmation_answered_at ||
+      null,
   };
 
   if (
@@ -637,6 +658,33 @@ function presenceSnapshot(
       .presence_required
   ) {
     return base;
+  }
+
+  if (
+    row
+      .presence_review_required
+  ) {
+    return {
+      ...base,
+
+      state:
+        "review",
+
+      label:
+        "Presença em análise",
+
+      detail:
+        row
+          .presence_confirmation_answered_at
+          ? "Motorista respondeu à confirmação. Aguarde decisão da unidade."
+          : "Saída do raio detectada. Confirmação de presença necessária.",
+
+      canCall:
+        false,
+
+      blockReason:
+        "Esta marcação está com presença interrompida e precisa de decisão da unidade.",
+    };
   }
 
   if (
@@ -1142,6 +1190,27 @@ async function initDatabase() {
       outside_since
       TIMESTAMPTZ;
 
+    ALTER TABLE queue_entries
+      ADD COLUMN IF NOT EXISTS
+      presence_review_required BOOLEAN
+      NOT NULL
+      DEFAULT FALSE;
+
+    ALTER TABLE queue_entries
+      ADD COLUMN IF NOT EXISTS
+      presence_review_started_at
+      TIMESTAMPTZ;
+
+    ALTER TABLE queue_entries
+      ADD COLUMN IF NOT EXISTS
+      presence_confirmation_requested_at
+      TIMESTAMPTZ;
+
+    ALTER TABLE queue_entries
+      ADD COLUMN IF NOT EXISTS
+      presence_confirmation_answered_at
+      TIMESTAMPTZ;
+
     CREATE TABLE IF NOT EXISTS audit_logs (
       id BIGSERIAL
         PRIMARY KEY,
@@ -1333,7 +1402,7 @@ app.get(
           true,
 
         version:
-          "15.2.0",
+          "15.3.0",
       });
 
     } catch (
@@ -1810,12 +1879,6 @@ app.post(
           );
       }
 
-      /*
-       * V15.2
-       *
-       * A posição considera
-       * SOMENTE aguardando.
-       */
       const queueInfo =
         await getWaitingQueueInfo(
           client,
@@ -2122,13 +2185,6 @@ app.post(
           )
         );
 
-      /*
-       * Tipos explícitos
-       * mantidos.
-       *
-       * Corrige PostgreSQL
-       * 42P08.
-       */
       const updatedResult =
         await client.query(
           `
@@ -2203,9 +2259,83 @@ app.post(
           ]
         );
 
-      const updated =
+      let updated =
         updatedResult
           .rows[0];
+
+      const updatedOutsideSeconds =
+        elapsedSeconds(
+          updated
+            .outside_since
+        );
+
+      if (
+        !updated
+          .presence_review_required &&
+
+        updatedOutsideSeconds !=
+          null &&
+
+        updatedOutsideSeconds >=
+          PRESENCE_OUTSIDE_GRACE_SECONDS
+      ) {
+        const reviewResult =
+          await client.query(
+            `
+              UPDATE queue_entries
+
+              SET
+                presence_review_required =
+                  TRUE,
+
+                presence_review_started_at =
+                  COALESCE(
+                    presence_review_started_at,
+                    NOW()
+                  ),
+
+                presence_confirmation_requested_at =
+                  COALESCE(
+                    presence_confirmation_requested_at,
+                    NOW()
+                  ),
+
+                updated_at =
+                  NOW()
+
+              WHERE
+                id =
+                  $1::uuid
+
+              RETURNING *
+            `,
+            [
+              updated.id,
+            ]
+          );
+
+        updated =
+          reviewResult
+            .rows[0];
+
+        await audit(
+          "PRESENCE_REVIEW_REQUIRED",
+          {
+            id:
+              updated.id,
+
+            plate:
+              updated.plate,
+
+            distanceM:
+              distance,
+
+            outsideSeconds:
+              updatedOutsideSeconds,
+          },
+          client
+        );
+      }
 
       if (
         !current
@@ -2296,6 +2426,351 @@ app.post(
   }
 );
 
+
+/*
+ * =========================================================
+ * CONFIRMAÇÃO DE PRESENÇA PELO MOTORISTA
+ * =========================================================
+ */
+app.post(
+  "/api/queue/:id/confirm-presence",
+
+  presenceLimiter,
+
+  async (
+    req,
+    res,
+    next
+  ) => {
+    const client =
+      await pool.connect();
+
+    try {
+      const deviceId =
+        cleanText(
+          req.body
+            .deviceId,
+          120
+        );
+
+      const latitude =
+        Number(
+          req.body
+            .latitude
+        );
+
+      const longitude =
+        Number(
+          req.body
+            .longitude
+        );
+
+      const accuracy =
+        normalizeAccuracy(
+          req.body
+            .accuracy
+        );
+
+      if (
+        !deviceId ||
+        !isFiniteCoordinate(
+          latitude,
+          -90,
+          90
+        ) ||
+        !isFiniteCoordinate(
+          longitude,
+          -180,
+          180
+        )
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Não foi possível validar a localização.",
+          });
+      }
+
+      await client.query(
+        "BEGIN"
+      );
+
+      const currentResult =
+        await client.query(
+          `
+            SELECT
+              q.*,
+
+              s.latitude AS
+                unit_latitude,
+
+              s.longitude AS
+                unit_longitude,
+
+              s.radius_m
+
+            FROM queue_entries q
+
+            CROSS JOIN settings s
+
+            WHERE
+              q.id = $1::uuid
+
+              AND
+              s.id = 1
+
+            FOR UPDATE OF q
+          `,
+          [
+            req.params.id,
+          ]
+        );
+
+      if (
+        currentResult
+          .rowCount ===
+        0
+      ) {
+        await client.query(
+          "ROLLBACK"
+        );
+
+        return res
+          .status(404)
+          .json({
+            error:
+              "Registro não encontrado.",
+          });
+      }
+
+      const current =
+        currentResult
+          .rows[0];
+
+      if (
+        !safeCompare(
+          deviceId,
+
+          current
+            .device_id ||
+          ""
+        )
+      ) {
+        await client.query(
+          "ROLLBACK"
+        );
+
+        return res
+          .status(403)
+          .json({
+            error:
+              "Este aparelho não pertence a esta marcação.",
+          });
+      }
+
+      if (
+        current.status !==
+        "aguardando"
+      ) {
+        await client.query(
+          "ROLLBACK"
+        );
+
+        return res
+          .status(409)
+          .json({
+            error:
+              "Esta marcação não está mais aguardando.",
+          });
+      }
+
+      const distance =
+        Math.round(
+          distanceMeters(
+            latitude,
+            longitude,
+
+            Number(
+              current
+                .unit_latitude
+            ),
+
+            Number(
+              current
+                .unit_longitude
+            )
+          )
+        );
+
+      const inside =
+        distance <=
+        Number(
+          current
+            .radius_m
+        );
+
+      const accurate =
+        accuracy ==
+          null ||
+        accuracy <=
+          PRESENCE_MAX_ACCURACY_METERS;
+
+      const updatedResult =
+        await client.query(
+          `
+            UPDATE queue_entries
+
+            SET
+              last_presence_at =
+                NOW(),
+
+              last_presence_latitude =
+                $1::double precision,
+
+              last_presence_longitude =
+                $2::double precision,
+
+              last_presence_distance_m =
+                $3::integer,
+
+              last_presence_accuracy_m =
+                $4::integer,
+
+              presence_confirmation_requested_at =
+                COALESCE(
+                  presence_confirmation_requested_at,
+                  NOW()
+                ),
+
+              presence_confirmation_answered_at =
+                NOW(),
+
+              outside_since =
+                CASE
+                  WHEN
+                    $4::integer IS NOT NULL
+                    AND
+                    $4::integer >
+                    $5::integer
+                  THEN
+                    outside_since
+
+                  WHEN
+                    $3::integer >
+                    $6::integer
+                  THEN
+                    COALESCE(
+                      outside_since,
+                      NOW()
+                    )
+
+                  ELSE
+                    NULL
+                END,
+
+              updated_at =
+                NOW()
+
+            WHERE
+              id =
+                $7::uuid
+
+            RETURNING *
+          `,
+          [
+            latitude,
+            longitude,
+            distance,
+            accuracy,
+            PRESENCE_MAX_ACCURACY_METERS,
+            Number(
+              current
+                .radius_m
+            ),
+            req.params.id,
+          ]
+        );
+
+      const updated =
+        updatedResult
+          .rows[0];
+
+      await audit(
+        "PRESENCE_CONFIRMATION_ANSWERED",
+        {
+          id:
+            updated.id,
+
+          plate:
+            updated.plate,
+
+          distanceM:
+            distance,
+
+          accuracyM:
+            accuracy,
+
+          inside,
+
+          accurate,
+        },
+        client
+      );
+
+      await client.query(
+        "COMMIT"
+      );
+
+      res.json({
+        ok:
+          true,
+
+        inside,
+
+        accurate,
+
+        distanceMeters:
+          distance,
+
+        accuracyMeters:
+          accuracy,
+
+        reviewRequired:
+          Boolean(
+            updated
+              .presence_review_required
+          ),
+
+        message:
+          !accurate
+            ? `GPS impreciso: aproximadamente ${accuracy} m. Tente novamente com a localização precisa ativada.`
+            : inside
+              ? "Localização confirmada dentro da unidade. Aguarde a decisão do responsável."
+              : `Você continua fora da área da unidade. Distância aproximada: ${distance} m.`,
+      });
+
+    } catch (
+      error
+    ) {
+      await client
+        .query(
+          "ROLLBACK"
+        )
+        .catch(
+          () => {}
+        );
+
+      next(
+        error
+      );
+
+    } finally {
+      client.release();
+    }
+  }
+);
+
 app.get(
   "/api/queue/:id/status",
 
@@ -2339,9 +2814,100 @@ app.get(
           });
       }
 
-      const item =
+      let item =
         result
           .rows[0];
+
+      const outsideSeconds =
+        elapsedSeconds(
+          item
+            .outside_since
+        );
+
+      if (
+        item.status ===
+          "aguardando" &&
+
+        item
+          .presence_required &&
+
+        !item
+          .presence_review_required &&
+
+        outsideSeconds !=
+          null &&
+
+        outsideSeconds >=
+          PRESENCE_OUTSIDE_GRACE_SECONDS
+      ) {
+        const reviewResult =
+          await pool.query(
+            `
+              UPDATE queue_entries
+
+              SET
+                presence_review_required =
+                  TRUE,
+
+                presence_review_started_at =
+                  COALESCE(
+                    presence_review_started_at,
+                    NOW()
+                  ),
+
+                presence_confirmation_requested_at =
+                  COALESCE(
+                    presence_confirmation_requested_at,
+                    NOW()
+                  ),
+
+                updated_at =
+                  NOW()
+
+              WHERE
+                id =
+                  $1::uuid
+
+                AND
+                presence_review_required =
+                  FALSE
+
+              RETURNING *
+            `,
+            [
+              item.id,
+            ]
+          );
+
+        if (
+          reviewResult
+            .rowCount >
+          0
+        ) {
+          item =
+            {
+              ...reviewResult
+                .rows[0],
+
+              radius_m:
+                item
+                  .radius_m,
+            };
+
+          await audit(
+            "PRESENCE_REVIEW_REQUIRED",
+            {
+              id:
+                item.id,
+
+              plate:
+                item.plate,
+
+              outsideSeconds,
+            }
+          );
+        }
+      }
 
       let position =
         null;
@@ -2349,13 +2915,6 @@ app.get(
       let aheadPlates =
         [];
 
-      /*
-       * V15.2
-       *
-       * Só quem está aguardando
-       * possui posição na fila
-       * de espera.
-       */
       if (
         item.status ===
         "aguardando"
@@ -2392,6 +2951,27 @@ app.get(
         position,
 
         aheadPlates,
+
+        presenceReviewRequired:
+          Boolean(
+            item
+              .presence_review_required
+          ),
+
+        presenceReviewStartedAt:
+          item
+            .presence_review_started_at ||
+          null,
+
+        presenceConfirmationRequestedAt:
+          item
+            .presence_confirmation_requested_at ||
+          null,
+
+        presenceConfirmationAnsweredAt:
+          item
+            .presence_confirmation_answered_at ||
+          null,
 
         presenceRequired:
           Boolean(
@@ -2798,7 +3378,11 @@ app.get(
               last_presence_longitude,
               last_presence_distance_m,
               last_presence_accuracy_m,
-              outside_since
+              outside_since,
+              presence_review_required,
+              presence_review_started_at,
+              presence_confirmation_requested_at,
+              presence_confirmation_answered_at
 
             FROM queue_entries
 
@@ -2978,6 +3562,244 @@ app.post(
       next(
         error
       );
+    }
+  }
+);
+
+
+/*
+ * =========================================================
+ * DECISÃO DO OPERADOR SOBRE PRESENÇA INTERROMPIDA
+ * =========================================================
+ *
+ * keep   = mantém a marcação/horário e libera a revisão.
+ * remove = encerra a marcação como finalizada.
+ *
+ * Nenhum registro é apagado.
+ */
+app.post(
+  "/api/admin/queue/:id/presence-review",
+
+  requireAdmin,
+
+  async (
+    req,
+    res,
+    next
+  ) => {
+    const client =
+      await pool.connect();
+
+    try {
+      const decision =
+        String(
+          req.body
+            .decision ||
+          ""
+        );
+
+      if (
+        decision !==
+          "keep" &&
+        decision !==
+          "remove"
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Decisão inválida.",
+          });
+      }
+
+      await client.query(
+        "BEGIN"
+      );
+
+      const currentResult =
+        await client.query(
+          `
+            SELECT *
+
+            FROM queue_entries
+
+            WHERE
+              id =
+                $1::uuid
+
+            FOR UPDATE
+          `,
+          [
+            req.params.id,
+          ]
+        );
+
+      if (
+        currentResult
+          .rowCount ===
+        0
+      ) {
+        await client.query(
+          "ROLLBACK"
+        );
+
+        return res
+          .status(404)
+          .json({
+            error:
+              "Registro não encontrado.",
+          });
+      }
+
+      const current =
+        currentResult
+          .rows[0];
+
+      if (
+        current.status !==
+        "aguardando"
+      ) {
+        await client.query(
+          "ROLLBACK"
+        );
+
+        return res
+          .status(409)
+          .json({
+            error:
+              "Esta marcação não está mais aguardando.",
+          });
+      }
+
+      let result;
+
+      if (
+        decision ===
+        "keep"
+      ) {
+        result =
+          await client.query(
+            `
+              UPDATE queue_entries
+
+              SET
+                presence_review_required =
+                  FALSE,
+
+                presence_review_started_at =
+                  NULL,
+
+                presence_confirmation_requested_at =
+                  NULL,
+
+                presence_confirmation_answered_at =
+                  NULL,
+
+                outside_since =
+                  CASE
+                    WHEN
+                      last_presence_distance_m IS NOT NULL
+                      AND
+                      last_presence_distance_m >
+                      (
+                        SELECT radius_m
+                        FROM settings
+                        WHERE id = 1
+                      )
+                    THEN
+                      NOW()
+                    ELSE
+                      NULL
+                  END,
+
+                updated_at =
+                  NOW()
+
+              WHERE
+                id =
+                  $1::uuid
+
+              RETURNING *
+            `,
+            [
+              current.id,
+            ]
+          );
+
+      } else {
+        result =
+          await client.query(
+            `
+              UPDATE queue_entries
+
+              SET
+                status =
+                  'finalizado',
+
+                updated_at =
+                  NOW()
+
+              WHERE
+                id =
+                  $1::uuid
+
+              RETURNING *
+            `,
+            [
+              current.id,
+            ]
+          );
+      }
+
+      await audit(
+        decision ===
+          "keep"
+          ? "PRESENCE_REVIEW_KEPT"
+          : "PRESENCE_REVIEW_REMOVED",
+        {
+          id:
+            current.id,
+
+          plate:
+            current.plate,
+
+          decision,
+        },
+        client
+      );
+
+      await client.query(
+        "COMMIT"
+      );
+
+      res.json({
+        ok:
+          true,
+
+        decision,
+
+        entry:
+          result
+            .rows[0],
+      });
+
+    } catch (
+      error
+    ) {
+      await client
+        .query(
+          "ROLLBACK"
+        )
+        .catch(
+          () => {}
+        );
+
+      next(
+        error
+      );
+
+    } finally {
+      client.release();
     }
   }
 );
@@ -3440,7 +4262,7 @@ initDatabase()
         "0.0.0.0",
         () => {
           console.log(
-            `Fila de carregamento V15.2.0 iniciada na porta ${PORT}.`
+            `Fila de carregamento V15.3.0 iniciada na porta ${PORT}.`
           );
         }
       );
