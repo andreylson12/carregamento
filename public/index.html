@@ -8,7 +8,6 @@
 
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -38,13 +37,7 @@ body {
   min-height: 100vh;
   font-family: Arial, sans-serif;
   color: var(--text);
-
-  background: linear-gradient(
-    135deg,
-    #edf4ff,
-    #f8fafc 52%,
-    #eef7f2
-  );
+  background: linear-gradient(135deg, #edf4ff, #f8fafc 52%, #eef7f2);
 }
 
 header {
@@ -180,37 +173,15 @@ main {
   gap: 18px;
 }
 
-.c12 {
-  grid-column: span 12;
-}
+.c12 { grid-column: span 12; }
+.c8 { grid-column: span 8; }
+.c7 { grid-column: span 7; }
+.c5 { grid-column: span 5; }
+.c4 { grid-column: span 4; }
 
-.c8 {
-  grid-column: span 8;
-}
-
-.c7 {
-  grid-column: span 7;
-}
-
-.c5 {
-  grid-column: span 5;
-}
-
-.c4 {
-  grid-column: span 4;
-}
-
-.queue-card {
-  grid-column: span 12;
-}
-
-.qr-card {
-  grid-column: span 4;
-}
-
-.settings-card {
-  grid-column: span 8;
-}
+.queue-card { grid-column: span 12; }
+.qr-card { grid-column: span 4; }
+.settings-card { grid-column: span 8; }
 
 .card {
   padding: 20px;
@@ -315,54 +286,6 @@ input:focus {
   border-radius: 12px;
 }
 
-/*
- * NOVO V15.2
- * Caixa com as duas placas imediatamente
- * à frente do motorista.
- */
-.ahead-plates {
-  margin: 10px 0 4px;
-  padding: 14px;
-  text-align: left;
-  background: #f8fafc;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-}
-
-.ahead-plates-title {
-  margin-bottom: 9px;
-  font-size: 13px;
-  font-weight: 800;
-  color: #344054;
-}
-
-.ahead-plate-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-
-  padding: 9px 10px;
-  margin-top: 7px;
-
-  background: #ffffff;
-  border: 1px solid #e3e8ef;
-  border-radius: 10px;
-}
-
-.ahead-plate-position {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--muted);
-}
-
-.ahead-plate-number {
-  font-size: 17px;
-  font-weight: 900;
-  color: var(--navy);
-  letter-spacing: 0.5px;
-}
-
 .presence-ticket {
   padding: 11px;
   margin-top: 12px;
@@ -420,50 +343,15 @@ th {
   background: #f5f7fa;
 }
 
-th:nth-child(1),
-td:nth-child(1) {
-  width: 54px;
-}
-
-th:nth-child(2),
-td:nth-child(2) {
-  width: 92px;
-}
-
-th:nth-child(3),
-td:nth-child(3) {
-  width: 130px;
-}
-
-th:nth-child(4),
-td:nth-child(4) {
-  width: 150px;
-}
-
-th:nth-child(5),
-td:nth-child(5) {
-  width: 145px;
-}
-
-th:nth-child(6),
-td:nth-child(6) {
-  width: 90px;
-}
-
-th:nth-child(7),
-td:nth-child(7) {
-  width: 180px;
-}
-
-th:nth-child(8),
-td:nth-child(8) {
-  width: 105px;
-}
-
-th:nth-child(9),
-td:nth-child(9) {
-  width: 250px;
-}
+th:nth-child(1), td:nth-child(1) { width: 54px; }
+th:nth-child(2), td:nth-child(2) { width: 92px; }
+th:nth-child(3), td:nth-child(3) { width: 130px; }
+th:nth-child(4), td:nth-child(4) { width: 150px; }
+th:nth-child(5), td:nth-child(5) { width: 145px; }
+th:nth-child(6), td:nth-child(6) { width: 90px; }
+th:nth-child(7), td:nth-child(7) { width: 180px; }
+th:nth-child(8), td:nth-child(8) { width: 105px; }
+th:nth-child(9), td:nth-child(9) { width: 250px; }
 
 .pill {
   display: inline-block;
@@ -473,60 +361,18 @@ td:nth-child(9) {
   border-radius: 999px;
 }
 
-.p-wait {
-  color: #1451a5;
-  background: #e8f1ff;
-}
+.p-wait { color: #1451a5; background: #e8f1ff; }
+.p-call { color: #7c5300; background: #fff2c9; }
+.p-scale { color: #12613f; background: #e7f8ee; }
+.p-done { color: #4a5568; background: #e9ecef; }
+.p-manual { color: #6b32a8; background: #f2eafe; }
 
-.p-call {
-  color: #7c5300;
-  background: #fff2c9;
-}
-
-.p-scale {
-  color: #12613f;
-  background: #e7f8ee;
-}
-
-.p-done {
-  color: #4a5568;
-  background: #e9ecef;
-}
-
-.p-manual {
-  color: #6b32a8;
-  background: #f2eafe;
-}
-
-.presence-inside {
-  color: #12613f;
-  background: #e7f8ee;
-}
-
-.presence-stale {
-  color: #7c5300;
-  background: #fff2c9;
-}
-
-.presence-outside {
-  color: #a51d1d;
-  background: #ffe2e2;
-}
-
-.presence-inaccurate {
-  color: #6b21a8;
-  background: #f3e8ff;
-}
-
-.presence-legacy {
-  color: #4a5568;
-  background: #e9ecef;
-}
-
-.presence-pending {
-  color: #1451a5;
-  background: #e8f1ff;
-}
+.presence-inside { color: #12613f; background: #e7f8ee; }
+.presence-stale { color: #7c5300; background: #fff2c9; }
+.presence-outside { color: #a51d1d; background: #ffe2e2; }
+.presence-inaccurate { color: #6b21a8; background: #f3e8ff; }
+.presence-legacy { color: #4a5568; background: #e9ecef; }
+.presence-pending { color: #1451a5; background: #e8f1ff; }
 
 .presence-detail {
   display: block;
@@ -606,609 +452,433 @@ td:nth-child(9) {
 <body>
 
 <header>
-<div class="wrap head">
+  <div class="wrap head">
+    <div>
+      <h1>🚛 Fila de Carregamento</h1>
+      <p id="unitHeader">Carregando unidade...</p>
+    </div>
 
-  <div>
-    <h1>🚛 Fila de Carregamento</h1>
-    <p id="unitHeader">
-      Carregando unidade...
-    </p>
+    <span class="badge-top">
+      QR + LOCALIZAÇÃO • PWA V15
+    </span>
   </div>
-
-  <span class="badge-top">
-    QR + LOCALIZAÇÃO • PWA V15.2
-  </span>
-
-</div>
 </header>
 
 <main class="wrap">
 
-<div class="tabs">
+  <div class="tabs">
+    <button class="tab active" data-view="driver">
+      📱 Motorista
+    </button>
 
-  <button
-    class="tab active"
-    data-view="driver"
-  >
-    📱 Motorista
-  </button>
+    <button class="tab" data-view="admin">
+      🖥️ Painel da unidade
+    </button>
+  </div>
 
-  <button
-    class="tab"
-    data-view="admin"
-  >
-    🖥️ Painel da unidade
-  </button>
+  <section id="driver" class="view active">
 
-</div>
-
-<section
-  id="driver"
-  class="view active"
->
-
-<div class="grid">
+    <div class="grid">
 
-<div class="card c7">
+      <div class="card c7">
 
-<h2>
-  Marcar chegada
-</h2>
+        <h2>Marcar chegada</h2>
 
-<p class="help">
-  Autorize a localização, informe seus dados e aguarde ser chamado.
-</p>
+        <p class="help">
+          Autorize a localização, informe seus dados e aguarde ser chamado.
+        </p>
 
-<div class="row">
+        <div class="row">
 
-<div>
+          <div>
+            <label>Placa do cavalo</label>
+            <input id="plate" maxlength="8">
+          </div>
 
-<label>
-  Placa do cavalo
-</label>
+          <div>
+            <label>Código do dia</label>
+            <input id="dailyCode" maxlength="12" inputmode="numeric">
+          </div>
 
-<input
-  id="plate"
-  maxlength="8"
->
+        </div>
 
-</div>
+        <label>Nome do motorista</label>
+        <input id="driverName" maxlength="120">
 
-<div>
+        <label>Transportadora</label>
+        <input id="carrier" maxlength="160">
 
-<label>
-  Código do dia
-</label>
+        <div id="locationBox" class="message warn">
+          <strong>📍 Localização ainda não verificada.</strong>
 
-<input
-  id="dailyCode"
-  maxlength="12"
-  inputmode="numeric"
->
+          <div class="help">
+            Clique no botão abaixo e permita o acesso do navegador.
+          </div>
+        </div>
 
-</div>
+        <button class="btn primary block" id="locationBtn">
+          📍 Usar minha localização
+        </button>
 
-</div>
+        <button class="btn success block" id="submitBtn">
+          ✅ Marcar chegada
+        </button>
 
-<label>
-  Nome do motorista
-</label>
+        <button class="btn dark block" id="installAppBtn">
+          📲 Instalar aplicativo
+        </button>
 
-<input
-  id="driverName"
-  maxlength="120"
->
+        <div id="installAppMessage"></div>
+        <div id="driverMessage"></div>
 
-<label>
-  Transportadora
-</label>
+      </div>
 
-<input
-  id="carrier"
-  maxlength="160"
->
+      <div class="card c5">
 
-<div
-  id="locationBox"
-  class="message warn"
->
+        <h3>Regras da marcação</h3>
 
-<strong>
-  📍 Localização ainda não verificada.
-</strong>
+        <ol class="help">
+          <li>É obrigatório estar dentro do raio da unidade.</li>
+          <li>O código do dia deve estar correto.</li>
+          <li>A placa não pode estar ativa duas vezes.</li>
+          <li>O mesmo aparelho pode ser limitado a uma placa ativa.</li>
+          <li>Mantenha o aplicativo aberto enquanto estiver aguardando.</li>
+        </ol>
 
-<div class="help">
-  Clique no botão abaixo e permita o acesso do navegador.
-</div>
+        <div id="ticket" class="ticket hidden">
 
-</div>
+          <div class="help">
+            Sua posição atual
+          </div>
 
-<button
-  class="btn primary block"
-  id="locationBtn"
->
-  📍 Usar minha localização
-</button>
-
-<button
-  class="btn success block"
-  id="submitBtn"
->
-  ✅ Marcar chegada
-</button>
+          <div id="position" class="number">
+            --
+          </div>
 
-<button
-  class="btn dark block"
-  id="installAppBtn"
->
-  📲 Instalar aplicativo
-</button>
+          <strong id="ticketPlate"></strong>
 
-<div id="installAppMessage"></div>
-<div id="driverMessage"></div>
+          <p id="ticketStatus" class="help"></p>
 
-</div>
+          <div
+            id="ticketAhead"
+            class="ahead-count hidden"
+          ></div>
 
-<div class="card c5">
+          <div
+            id="ticketPresence"
+            class="presence-ticket presence-pending"
+          >
+            <strong>
+              📍 Verificando presença...
+            </strong>
 
-<h3>
-  Regras da marcação
-</h3>
+            <div class="help">
+              Aguarde a atualização da localização.
+            </div>
+          </div>
 
-<ol class="help">
+        </div>
+      </div>
+    </div>
+  </section>
 
-<li>
-  É obrigatório estar dentro do raio da unidade.
-</li>
+  <section id="admin" class="view">
 
-<li>
-  O código do dia deve estar correto.
-</li>
-
-<li>
-  A placa não pode estar ativa duas vezes.
-</li>
+    <div id="loginBox" class="card login">
 
-<li>
-  O mesmo aparelho pode ser limitado a uma placa ativa.
-</li>
+      <h2>🔒 Acesso ao painel</h2>
 
-<li>
-  Mantenha o aplicativo aberto enquanto estiver aguardando.
-</li>
+      <label>Senha administrativa</label>
+      <input id="adminPassword" type="password">
 
-</ol>
+      <button
+        id="loginBtn"
+        class="btn dark block"
+      >
+        Entrar
+      </button>
 
-<div
-  id="ticket"
-  class="ticket hidden"
->
+      <div id="loginMessage"></div>
 
-<div class="help">
-  Sua posição atual
-</div>
-
-<div
-  id="position"
-  class="number"
->
-  --
-</div>
-
-<strong id="ticketPlate"></strong>
-
-<p
-  id="ticketStatus"
-  class="help"
-></p>
-
-<div
-  id="ticketAhead"
-  class="ahead-count hidden"
-></div>
-
-<div
-  id="ticketAheadPlates"
-  class="ahead-plates hidden"
-></div>
-
-<div
-  id="ticketPresence"
-  class="presence-ticket presence-pending"
->
+    </div>
 
-<strong>
-  📍 Verificando presença...
-</strong>
+    <div id="adminArea" class="hidden">
 
-<div class="help">
-  Aguarde a atualização da localização.
-</div>
+      <div class="summary">
 
-</div>
+        <div class="mini">
+          <span class="help">Aguardando</span>
+          <b id="sumWait">0</b>
+        </div>
 
-</div>
+        <div class="mini">
+          <span class="help">Chamados</span>
+          <b id="sumCall">0</b>
+        </div>
 
-</div>
+        <div class="mini">
+          <span class="help">Na balança</span>
+          <b id="sumScale">0</b>
+        </div>
 
-</div>
+        <div class="mini">
+          <span class="help">Finalizados</span>
+          <b id="sumDone">0</b>
+        </div>
 
-</section>
+      </div>
 
-<section
-  id="admin"
-  class="view"
->
-
-<div
-  id="loginBox"
-  class="card login"
->
-
-<h2>
-  🔒 Acesso ao painel
-</h2>
-
-<label>
-  Senha administrativa
-</label>
+      <div class="grid">
 
-<input
-  id="adminPassword"
-  type="password"
->
+        <div class="card queue-card">
 
-<button
-  id="loginBtn"
-  class="btn dark block"
->
-  Entrar
-</button>
+          <div class="head">
 
-<div id="loginMessage"></div>
-
-</div>
-
-<div
-  id="adminArea"
-  class="hidden"
->
+            <div>
+              <h2 style="margin-bottom:4px">
+                Fila atual
+              </h2>
 
-<div class="summary">
+              <span class="help">
+                Atualização automática. Cadastros anteriores à V15 não serão bloqueados.
+              </span>
+            </div>
 
-<div class="mini">
-  <span class="help">
-    Aguardando
-  </span>
-  <b id="sumWait">0</b>
-</div>
+            <div class="actions">
 
-<div class="mini">
-  <span class="help">
-    Chamados
-  </span>
-  <b id="sumCall">0</b>
-</div>
+              <button
+                id="refreshBtn"
+                class="btn secondary small"
+              >
+                🔄 Atualizar
+              </button>
 
-<div class="mini">
-  <span class="help">
-    Na balança
-  </span>
-  <b id="sumScale">0</b>
-</div>
+              <button
+                id="clearFinishedBtn"
+                class="btn secondary small"
+              >
+                Limpar finalizados
+              </button>
 
-<div class="mini">
-  <span class="help">
-    Finalizados
-  </span>
-  <b id="sumDone">0</b>
-</div>
+              <button
+                id="clearAllBtn"
+                class="btn danger small"
+              >
+                Limpar tudo
+              </button>
 
-</div>
+            </div>
 
-<div class="grid">
+          </div>
 
-<div class="card queue-card">
+          <div class="table-wrap">
 
-<div class="head">
+            <table>
 
-<div>
+              <thead>
 
-<h2 style="margin-bottom:4px">
-  Fila atual
-</h2>
+                <tr>
+                  <th>Fila</th>
+                  <th>Placa</th>
+                  <th>Motorista</th>
+                  <th>Transportadora</th>
+                  <th>Chegada</th>
+                  <th>Distância</th>
+                  <th>Presença</th>
+                  <th>Situação</th>
+                  <th>Ações</th>
+                </tr>
 
-<span class="help">
-  Atualização automática. Cadastros anteriores à V15 não serão bloqueados.
-</span>
+              </thead>
 
-</div>
+              <tbody id="queueBody"></tbody>
 
-<div class="actions">
+            </table>
 
-<button
-  id="refreshBtn"
-  class="btn secondary small"
->
-  🔄 Atualizar
-</button>
+          </div>
+        </div>
 
-<button
-  id="clearFinishedBtn"
-  class="btn secondary small"
->
-  Limpar finalizados
-</button>
+        <div class="card qr-card">
 
-<button
-  id="clearAllBtn"
-  class="btn danger small"
->
-  Limpar tudo
-</button>
+          <h2>QR Code</h2>
 
-</div>
+          <p class="help">
+            Imprima este código e coloque na entrada da unidade.
+          </p>
 
-</div>
+          <div class="qr">
+            <div id="qrcode"></div>
+          </div>
 
-<div class="table-wrap">
+          <button
+            id="printQrBtn"
+            class="btn primary block"
+          >
+            🖨️ Imprimir QR
+          </button>
 
-<table>
+        </div>
 
-<thead>
+        <div class="card settings-card">
 
-<tr>
-  <th>Fila</th>
-  <th>Placa</th>
-  <th>Motorista</th>
-  <th>Transportadora</th>
-  <th>Chegada</th>
-  <th>Distância</th>
-  <th>Presença</th>
-  <th>Situação</th>
-  <th>Ações</th>
-</tr>
+          <h2>Configuração da unidade</h2>
 
-</thead>
+          <div class="row">
 
-<tbody id="queueBody"></tbody>
+            <div>
+              <label>Nome da unidade</label>
+              <input id="unitName">
+            </div>
 
-</table>
+            <div>
+              <label>Código do dia</label>
+              <input id="configCode" maxlength="12">
+            </div>
 
-</div>
+          </div>
 
-</div>
+          <div class="row">
 
-<div class="card qr-card">
+            <div>
+              <label>Latitude</label>
+              <input
+                id="unitLat"
+                type="number"
+                step="any"
+              >
+            </div>
 
-<h2>
-  QR Code
-</h2>
+            <div>
+              <label>Longitude</label>
+              <input
+                id="unitLon"
+                type="number"
+                step="any"
+              >
+            </div>
 
-<p class="help">
-  Imprima este código e coloque na entrada da unidade.
-</p>
+          </div>
 
-<div class="qr">
-  <div id="qrcode"></div>
-</div>
+          <div class="row">
 
-<button
-  id="printQrBtn"
-  class="btn primary block"
->
-  🖨️ Imprimir QR
-</button>
+            <div>
+              <label>Raio permitido em metros</label>
 
-</div>
+              <input
+                id="radiusM"
+                type="number"
+                min="20"
+                max="10000"
+              >
+            </div>
 
-<div class="card settings-card">
+            <div>
 
-<h2>
-  Configuração da unidade
-</h2>
+              <label style="margin-bottom:12px">
+                Controle por aparelho
+              </label>
 
-<div class="row">
+              <label style="font-weight:normal">
 
-<div>
+                <input
+                  id="blockDevice"
+                  type="checkbox"
+                  style="width:auto"
+                >
 
-<label>
-  Nome da unidade
-</label>
+                Bloquear mais de uma placa ativa no mesmo aparelho
 
-<input id="unitName">
+              </label>
 
-</div>
+            </div>
 
-<div>
+          </div>
 
-<label>
-  Código do dia
-</label>
+          <div class="message ok">
 
-<input
-  id="configCode"
-  maxlength="12"
->
+            <strong>
+              📍 Verificação periódica V15
+            </strong>
 
-</div>
+            <div class="help">
+              Atualização a cada 60 segundos, localização antiga após 3 minutos
+              e tolerância de 5 minutos fora do raio.
+            </div>
 
-</div>
+          </div>
 
-<div class="row">
+          <div class="actions">
 
-<div>
+            <button
+              id="useUnitLocationBtn"
+              class="btn secondary"
+            >
+              📍 Usar localização deste aparelho
+            </button>
 
-<label>
-  Latitude
-</label>
+            <button
+              id="newCodeBtn"
+              class="btn warning"
+            >
+              🔢 Novo código
+            </button>
 
-<input
-  id="unitLat"
-  type="number"
-  step="any"
->
+            <button
+              id="saveSettingsBtn"
+              class="btn primary"
+            >
+              💾 Salvar
+            </button>
 
-</div>
+          </div>
 
-<div>
+          <div id="settingsMessage"></div>
 
-<label>
-  Longitude
-</label>
+        </div>
 
-<input
-  id="unitLon"
-  type="number"
-  step="any"
->
+        <div class="card c12">
 
-</div>
+          <h2>Inclusão manual</h2>
 
-</div>
+          <p class="help">
+            Para motorista sem celular ou quando o GPS falhar.
+          </p>
 
-<div class="row">
+          <div class="row">
 
-<div>
+            <div>
+              <label>Placa</label>
+              <input id="manualPlate">
+            </div>
 
-<label>
-  Raio permitido em metros
-</label>
+            <div>
+              <label>Motorista</label>
+              <input id="manualDriver">
+            </div>
 
-<input
-  id="radiusM"
-  type="number"
-  min="20"
-  max="10000"
->
+          </div>
 
-</div>
+          <label>Transportadora</label>
+          <input id="manualCarrier">
 
-<div>
+          <button
+            id="manualBtn"
+            class="btn dark block"
+          >
+            Adicionar manualmente
+          </button>
 
-<label style="margin-bottom:12px">
-  Controle por aparelho
-</label>
+          <div id="manualMessage"></div>
 
-<label style="font-weight:normal">
+        </div>
 
-<input
-  id="blockDevice"
-  type="checkbox"
-  style="width:auto"
->
+      </div>
+    </div>
+  </section>
 
-Bloquear mais de uma placa ativa no mesmo aparelho
-
-</label>
-
-</div>
-
-</div>
-
-<div class="message ok">
-
-<strong>
-  📍 Verificação periódica V15
-</strong>
-
-<div class="help">
-  Atualização a cada 60 segundos,
-  localização antiga após 3 minutos
-  e tolerância de 5 minutos fora do raio.
-</div>
-
-</div>
-
-<div class="actions">
-
-<button
-  id="useUnitLocationBtn"
-  class="btn secondary"
->
-  📍 Usar localização deste aparelho
-</button>
-
-<button
-  id="newCodeBtn"
-  class="btn warning"
->
-  🔢 Novo código
-</button>
-
-<button
-  id="saveSettingsBtn"
-  class="btn primary"
->
-  💾 Salvar
-</button>
-
-</div>
-
-<div id="settingsMessage"></div>
-
-</div>
-
-<div class="card c12">
-
-<h2>
-  Inclusão manual
-</h2>
-
-<p class="help">
-  Para motorista sem celular ou quando o GPS falhar.
-</p>
-
-<div class="row">
-
-<div>
-
-<label>
-  Placa
-</label>
-
-<input id="manualPlate">
-
-</div>
-
-<div>
-
-<label>
-  Motorista
-</label>
-
-<input id="manualDriver">
-
-</div>
-
-</div>
-
-<label>
-  Transportadora
-</label>
-
-<input id="manualCarrier">
-
-<button
-  id="manualBtn"
-  class="btn dark block"
->
-  Adicionar manualmente
-</button>
-
-<div id="manualMessage"></div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<div class="foot">
-  Sistema compartilhado com PostgreSQL no Railway • PWA V15.2.
-</div>
+  <div class="foot">
+    Sistema compartilhado com PostgreSQL no Railway • PWA V15.
+  </div>
 
 </main>
 
@@ -1217,18 +887,24 @@ Bloquear mais de uma placa ativa no mesmo aparelho
 <script>
 "use strict";
 
-const $ = (id) =>
-  document.getElementById(id);
+const $ =
+  (id) =>
+    document.getElementById(id);
 
-let currentLocation = null;
+let currentLocation =
+  null;
 
 let adminToken =
   localStorage.getItem(
     "fila_admin_token"
-  ) || "";
+  ) ||
+  "";
 
-let statusTimer = null;
-let adminTimer = null;
+let statusTimer =
+  null;
+
+let adminTimer =
+  null;
 
 let queueCache =
   new Map();
@@ -1240,36 +916,57 @@ let installPromptEvent =
   null;
 
 let publicConfig = {
-  presenceIntervalSeconds: 60,
-  presenceStaleSeconds: 180,
-  presenceOutsideGraceSeconds: 300,
-  presenceMaxAccuracyMeters: 100
+  presenceIntervalSeconds:
+    60,
+
+  presenceStaleSeconds:
+    180,
+
+  presenceOutsideGraceSeconds:
+    300,
+
+  presenceMaxAccuracyMeters:
+    100,
 };
 
-let presenceTimer = null;
-let presenceBusy = false;
-let lastPresenceSentAt = 0;
-let monitoredQueueId = null;
+let presenceTimer =
+  null;
 
-/*
- * Evita que focus + visibilitychange + pageshow
- * façam várias verificações ao mesmo tempo.
- */
-let lastAppWakeAt = 0;
+let presenceBusy =
+  false;
 
-function esc(value) {
+let lastPresenceSentAt =
+  0;
+
+let monitoredQueueId =
+  null;
+
+function esc(
+  value
+) {
   return String(
     value ?? ""
   ).replace(
     /[&<>'"]/g,
 
-    (character) => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      "'": "&#39;",
-      '"': "&quot;"
-    })[character]
+    (character) =>
+      ({
+        "&":
+          "&amp;",
+
+        "<":
+          "&lt;",
+
+        ">":
+          "&gt;",
+
+        "'":
+          "&#39;",
+
+        '"':
+          "&quot;",
+
+      })[character]
   );
 }
 
@@ -1287,14 +984,20 @@ function msg(
 
       ${
         text
-          ? `<div class="help">${esc(text)}</div>`
+          ? `
+              <div class="help">
+                ${esc(text)}
+              </div>
+            `
           : ""
       }
     </div>
   `;
 }
 
-function plate(value) {
+function plate(
+  value
+) {
   return String(
     value || ""
   )
@@ -1310,12 +1013,14 @@ function plate(value) {
 }
 
 function deviceId() {
+
   let id =
     localStorage.getItem(
       "fila_device_id"
     );
 
   if (!id) {
+
     id =
       "dev-" +
       crypto.randomUUID();
@@ -1333,11 +1038,15 @@ async function api(
   url,
   options = {}
 ) {
+
   const headers = {
     "Content-Type":
       "application/json",
 
-    ...(options.headers || {})
+    ...(
+      options.headers ||
+      {}
+    ),
   };
 
   if (
@@ -1353,7 +1062,7 @@ async function api(
       url,
       {
         ...options,
-        headers
+        headers,
       }
     );
 
@@ -1364,10 +1073,13 @@ async function api(
       await response.json();
   } catch {}
 
-  if (!response.ok) {
+  if (
+    !response.ok
+  ) {
 
     if (
-      response.status === 401 &&
+      response.status ===
+        401 &&
       options.admin
     ) {
       adminToken = "";
@@ -1395,22 +1107,35 @@ async function api(
   return data;
 }
 
-function formatDate(value) {
+function formatDate(
+  value
+) {
   return new Date(
     value
   ).toLocaleString(
     "pt-BR",
     {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
+      day:
+        "2-digit",
+
+      month:
+        "2-digit",
+
+      year:
+        "numeric",
+
+      hour:
+        "2-digit",
+
+      minute:
+        "2-digit",
     }
   );
 }
 
-function statusName(status) {
+function statusName(
+  status
+) {
   return ({
     aguardando:
       "Aguardando",
@@ -1422,26 +1147,31 @@ function statusName(status) {
       "Na balança",
 
     finalizado:
-      "Finalizado"
-
-  })[status] || status;
-}
-
-function statusPill(status) {
-  const className = ({
-    aguardando:
-      "p-wait",
-
-    chamado:
-      "p-call",
-
-    balanca:
-      "p-scale",
-
-    finalizado:
-      "p-done"
+      "Finalizado",
 
   })[status] ||
+  status;
+}
+
+function statusPill(
+  status
+) {
+
+  const className =
+    ({
+      aguardando:
+        "p-wait",
+
+      chamado:
+        "p-call",
+
+      balanca:
+        "p-scale",
+
+      finalizado:
+        "p-done",
+
+    })[status] ||
     "p-wait";
 
   return `
@@ -1451,7 +1181,9 @@ function statusPill(status) {
   `;
 }
 
-function presenceClass(state) {
+function presenceClass(
+  state
+) {
   return ({
     inside:
       "presence-inside",
@@ -1475,28 +1207,48 @@ function presenceClass(state) {
       "presence-legacy",
 
     pending:
-      "presence-pending"
+      "presence-pending",
 
   })[state] ||
-    "presence-pending";
+  "presence-pending";
 }
 
-function presenceIcon(state) {
+function presenceIcon(
+  state
+) {
   return ({
-    inside: "🟢",
-    stale: "🟡",
-    outside: "🔴",
-    outside_grace: "🟠",
-    inaccurate: "🟣",
-    legacy: "⚪",
-    manual: "⚪",
-    pending: "🔵"
-  })[state] || "🔵";
+    inside:
+      "🟢",
+
+    stale:
+      "🟡",
+
+    outside:
+      "🔴",
+
+    outside_grace:
+      "🟠",
+
+    inaccurate:
+      "🟣",
+
+    legacy:
+      "⚪",
+
+    manual:
+      "⚪",
+
+    pending:
+      "🔵",
+
+  })[state] ||
+  "🔵";
 }
 
 function presenceHtml(
   presence
 ) {
+
   if (!presence) {
     return `
       <span class="pill presence-pending">
@@ -1534,6 +1286,7 @@ function presenceHtml(
 function updateTicketPresence(
   presence
 ) {
+
   const box =
     $("ticketPresence");
 
@@ -1553,7 +1306,6 @@ function updateTicketPresence(
   box.innerHTML = `
     <strong>
       ${presenceIcon(state)}
-
       ${esc(
         presence?.label ||
         "Verificando presença"
@@ -1570,6 +1322,7 @@ function updateTicketPresence(
 }
 
 function stopPresenceMonitoring() {
+
   if (presenceTimer) {
     clearInterval(
       presenceTimer
@@ -1589,6 +1342,7 @@ function stopPresenceMonitoring() {
 async function sendPresenceNow(
   force = false
 ) {
+
   const id =
     localStorage.getItem(
       "fila_last_id"
@@ -1611,11 +1365,11 @@ async function sendPresenceNow(
           .presenceIntervalSeconds ||
         60
       )
-    ) * 1000;
+    ) *
+    1000;
 
   if (
     !force &&
-
     Date.now() -
       lastPresenceSentAt <
       minimumInterval -
@@ -1630,8 +1384,12 @@ async function sendPresenceNow(
   navigator.geolocation
     .getCurrentPosition(
 
-      async (position) => {
+      async (
+        position
+      ) => {
+
         try {
+
           const result =
             await api(
               `/api/queue/${id}/presence`,
@@ -1657,8 +1415,8 @@ async function sendPresenceNow(
                     accuracy:
                       position
                         .coords
-                        .accuracy
-                  })
+                        .accuracy,
+                  }),
               }
             );
 
@@ -1670,7 +1428,8 @@ async function sendPresenceNow(
           );
 
           if (
-            result.active === false ||
+            result.active ===
+              false ||
 
             result.status !==
               "aguardando"
@@ -1678,11 +1437,16 @@ async function sendPresenceNow(
             stopPresenceMonitoring();
           }
 
-        } catch (error) {
+        } catch (
+          error
+        ) {
 
           if (
-            error.status === 404 ||
-            error.status === 409
+            error.status ===
+              404 ||
+
+            error.status ===
+              409
           ) {
             stopPresenceMonitoring();
           }
@@ -1695,16 +1459,20 @@ async function sendPresenceNow(
               "Não foi possível atualizar",
 
             detail:
-              error.message
+              error.message,
           });
 
         } finally {
+
           presenceBusy =
             false;
         }
       },
 
-      (error) => {
+      (
+        error
+      ) => {
+
         presenceBusy =
           false;
 
@@ -1717,7 +1485,7 @@ async function sendPresenceNow(
 
           detail:
             error.message ||
-            "Abra o aplicativo e autorize a localização."
+            "Abra o aplicativo e autorize a localização.",
         });
       },
 
@@ -1729,7 +1497,7 @@ async function sendPresenceNow(
           20000,
 
         maximumAge:
-          15000
+          15000,
       }
     );
 }
@@ -1737,9 +1505,9 @@ async function sendPresenceNow(
 function startPresenceMonitoring(
   data
 ) {
+
   if (
     !data?.presenceRequired ||
-
     data.status !==
       "aguardando"
   ) {
@@ -1766,7 +1534,9 @@ function startPresenceMonitoring(
       id;
   }
 
-  if (!presenceTimer) {
+  if (
+    !presenceTimer
+  ) {
 
     const interval =
       Math.max(
@@ -1777,7 +1547,8 @@ function startPresenceMonitoring(
             .presenceIntervalSeconds ||
           60
         )
-      ) * 1000;
+      ) *
+      1000;
 
     presenceTimer =
       setInterval(
@@ -1785,6 +1556,7 @@ function startPresenceMonitoring(
           sendPresenceNow(
             false
           ),
+
         interval
       );
   }
@@ -1792,7 +1564,7 @@ function startPresenceMonitoring(
   if (
     Date.now() -
       lastPresenceSentAt >
-      30000
+    30000
   ) {
     sendPresenceNow(
       true
@@ -1805,7 +1577,9 @@ document
     ".tab"
   )
   .forEach(
-    (button) => {
+    (
+      button
+    ) => {
 
       button.onclick =
         () => {
@@ -1815,7 +1589,9 @@ document
               ".tab"
             )
             .forEach(
-              (item) => {
+              (
+                item
+              ) => {
                 item
                   .classList
                   .remove(
@@ -1829,7 +1605,9 @@ document
               ".view"
             )
             .forEach(
-              (item) => {
+              (
+                item
+              ) => {
                 item
                   .classList
                   .remove(
@@ -1855,7 +1633,9 @@ document
             );
 
           if (
-            button.dataset.view ===
+            button
+              .dataset
+              .view ===
               "admin" &&
 
             adminToken
@@ -1867,23 +1647,33 @@ document
   );
 
 $("plate").oninput =
-  (event) => {
+  (
+    event
+  ) => {
     event.target.value =
       plate(
-        event.target.value
+        event
+          .target
+          .value
       );
   };
 
 $("manualPlate").oninput =
-  (event) => {
+  (
+    event
+  ) => {
     event.target.value =
       plate(
-        event.target.value
+        event
+          .target
+          .value
       );
   };
 
 async function loadPublic() {
+
   try {
+
     const config =
       await api(
         "/api/public-config"
@@ -1891,7 +1681,7 @@ async function loadPublic() {
 
     publicConfig = {
       ...publicConfig,
-      ...config
+      ...config,
     };
 
     $("unitHeader")
@@ -1902,6 +1692,7 @@ async function loadPublic() {
       `Fila - ${config.unitName}`;
 
   } catch {
+
     $("unitHeader")
       .textContent =
       "Unidade de Carregamento";
@@ -1932,7 +1723,9 @@ $("locationBtn").onclick =
     navigator.geolocation
       .getCurrentPosition(
 
-        (position) => {
+        (
+          position
+        ) => {
 
           currentLocation = {
             latitude:
@@ -1948,7 +1741,7 @@ $("locationBtn").onclick =
             accuracy:
               position
                 .coords
-                .accuracy
+                .accuracy,
           };
 
           $("locationBox")
@@ -1978,7 +1771,10 @@ $("locationBtn").onclick =
             "";
         },
 
-        (error) => {
+        (
+          error
+        ) => {
+
           msg(
             "driverMessage",
             "bad",
@@ -1995,7 +1791,7 @@ $("locationBtn").onclick =
             15000,
 
           maximumAge:
-            0
+            0,
         }
       );
   };
@@ -2005,7 +1801,9 @@ $("submitBtn").onclick =
 
     try {
 
-      if (!currentLocation) {
+      if (
+        !currentLocation
+      ) {
         throw new Error(
           "Autorize a localização antes de marcar."
         );
@@ -2051,8 +1849,8 @@ $("submitBtn").onclick =
                 presenceVersion:
                   15,
 
-                ...currentLocation
-              })
+                ...currentLocation,
+              }),
           }
         );
 
@@ -2075,7 +1873,9 @@ $("submitBtn").onclick =
         `A placa ${data.plate} entrou na fila. Mantenha o aplicativo aberto.`
       );
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       msg(
         "driverMessage",
@@ -2092,9 +1892,24 @@ $("submitBtn").onclick =
     }
   };
 
+/*
+ * =========================================================
+ * POSIÇÃO + DUAS PLACAS À FRENTE
+ * =========================================================
+ *
+ * O servidor V15.2 já devolve:
+ *
+ * data.position
+ * data.aheadPlates
+ *
+ * Aqui somente mostramos essas informações.
+ *
+ * Nenhuma alteração é feita na fila.
+ */
 function updateAheadCount(
   data
 ) {
+
   const box =
     $("ticketAhead");
 
@@ -2103,64 +1918,24 @@ function updateAheadCount(
       data.position
     );
 
-  box.classList.add(
-    "hidden"
-  );
-
-  box.textContent =
-    "";
-
-  if (
-    data.status !==
-      "aguardando" ||
-
-    !Number.isInteger(
-      position
-    ) ||
-
-    position < 1
-  ) {
-    return;
-  }
-
-  if (
-    position === 1
-  ) {
-    box.textContent =
-      "Você é o próximo da fila. Fique atento à chamada no WhatsApp.";
-
-  } else if (
-    position === 2
-  ) {
-    box.textContent =
-      "Falta 1 caminhão na sua frente.";
-
-  } else {
-    box.textContent =
-      `Faltam ${position - 1} caminhões na sua frente.`;
-  }
-
-  box.classList.remove(
-    "hidden"
-  );
-}
-
-/*
- * =========================================================
- * V15.2
- *
- * MOSTRA AS DUAS PLACAS IMEDIATAMENTE À FRENTE
- * =========================================================
- */
-function updateAheadPlates(
-  data
-) {
-  const box =
-    $("ticketAheadPlates");
-
-  if (!box) {
-    return;
-  }
+  const aheadPlates =
+    Array.isArray(
+      data.aheadPlates
+    )
+      ? data
+          .aheadPlates
+          .filter(
+            (
+              item
+            ) =>
+              item &&
+              item.plate
+          )
+          .slice(
+            0,
+            2
+          )
+      : [];
 
   box.classList.add(
     "hidden"
@@ -2171,71 +1946,120 @@ function updateAheadPlates(
 
   if (
     data.status !==
-      "aguardando"
+      "aguardando" ||
+
+    !Number.isInteger(
+      position
+    ) ||
+
+    position <
+      1
   ) {
     return;
   }
 
-  const aheadPlates =
-    Array.isArray(
-      data.aheadPlates
-    )
-      ? data.aheadPlates
-      : [];
+  let queueText =
+    "";
 
   if (
-    aheadPlates.length ===
-    0
+    position ===
+    1
   ) {
-    return;
+
+    queueText =
+      "Você é o próximo da fila. Fique atento à chamada no WhatsApp.";
+
+  } else if (
+    position ===
+    2
+  ) {
+
+    queueText =
+      "Falta 1 caminhão na sua frente.";
+
+  } else {
+
+    queueText =
+      `Faltam ${position - 1} caminhões na sua frente.`;
   }
 
-  const rows =
-    aheadPlates
-      .map(
-        (item) => {
+  let platesHtml =
+    "";
 
-          const queuePosition =
-            Number(
-              item.position
-            );
+  if (
+    aheadPlates.length >
+    0
+  ) {
 
-          const positionText =
-            Number.isInteger(
-              queuePosition
-            ) &&
-            queuePosition > 0
-              ? `${queuePosition}º na fila`
-              : "À sua frente";
+    const plateItems =
+      aheadPlates
+        .map(
+          (
+            item
+          ) => {
 
-          return `
-            <div class="ahead-plate-row">
+            const itemPosition =
+              Number(
+                item.position
+              );
 
-              <span class="ahead-plate-position">
-                ${esc(positionText)}
-              </span>
+            const positionLabel =
+              Number.isInteger(
+                itemPosition
+              )
+                ? `Posição ${itemPosition}`
+                : "À frente";
 
-              <span class="ahead-plate-number">
+            return `
+              <span
+                class="pill p-wait"
+                style="
+                  margin:
+                  4px 4px 0 0
+                "
+              >
                 ${esc(
-                  item.plate ||
-                  ""
+                  item.plate
+                )}
+
+                •
+
+                ${esc(
+                  positionLabel
                 )}
               </span>
+            `;
+          }
+        )
+        .join(
+          ""
+        );
 
-            </div>
-          `;
-        }
-      )
-      .join(
-        ""
-      );
+    platesHtml = `
+      <div
+        style="
+          margin-top:10px;
+          font-size:13px;
+          font-weight:700
+        "
+      >
+        🚛 Placas à sua frente:
+      </div>
+
+      <div style="margin-top:4px">
+        ${plateItems}
+      </div>
+    `;
+  }
 
   box.innerHTML = `
-    <div class="ahead-plates-title">
-      🚛 Placas logo à sua frente
+    <div>
+      ${esc(
+        queueText
+      )}
     </div>
 
-    ${rows}
+    ${platesHtml}
   `;
 
   box.classList.remove(
@@ -2246,6 +2070,7 @@ function updateAheadPlates(
 function showTicket(
   data
 ) {
+
   $("ticket")
     .classList
     .remove(
@@ -2271,15 +2096,14 @@ function showTicket(
     data
   );
 
-  updateAheadPlates(
-    data
-  );
-
   updateTicketPresence(
     data.presence
   );
 
-  if (!statusTimer) {
+  if (
+    !statusTimer
+  ) {
+
     statusTimer =
       setInterval(
         checkMyStatus,
@@ -2293,8 +2117,9 @@ function showTicket(
 
   if (
     data.status ===
-      "finalizado"
+    "finalizado"
   ) {
+
     clearInterval(
       statusTimer
     );
@@ -2307,13 +2132,14 @@ function showTicket(
 }
 
 async function checkMyStatus() {
+
   const id =
     localStorage.getItem(
       "fila_last_id"
     );
 
   if (!id) {
-    return null;
+    return;
   }
 
   try {
@@ -2327,133 +2153,63 @@ async function checkMyStatus() {
       data
     );
 
-    return data;
-
-  } catch (error) {
+  } catch (
+    error
+  ) {
 
     if (
       error.status ===
       404
     ) {
-      if (statusTimer) {
-        clearInterval(
-          statusTimer
-        );
-      }
+
+      clearInterval(
+        statusTimer
+      );
 
       statusTimer =
         null;
 
       stopPresenceMonitoring();
     }
-
-    return null;
   }
 }
 
-/*
- * Toda vez que um motorista já cadastrado
- * abre ou volta para o app:
- *
- * 1 - recupera o cadastro;
- * 2 - atualiza posição;
- * 3 - atualiza placas à frente;
- * 4 - verifica presença;
- * 5 - tenta enviar GPS atualizado.
- */
-async function atualizarAoAbrirApp() {
-
-  const id =
-    localStorage.getItem(
-      "fila_last_id"
-    );
-
-  if (!id) {
-    return;
-  }
-
-  const now =
-    Date.now();
-
-  if (
-    now -
-      lastAppWakeAt <
-      2000
-  ) {
-    return;
-  }
-
-  lastAppWakeAt =
-    now;
-
-  const data =
-    await checkMyStatus();
-
-  if (
-    !data ||
-    !data.presenceRequired ||
-
-    data.status !==
-      "aguardando"
-  ) {
-    return;
-  }
-
-  setTimeout(
+document
+  .addEventListener(
+    "visibilitychange",
     () => {
 
-      const currentId =
-        localStorage.getItem(
-          "fila_last_id"
-        );
-
       if (
-        currentId !==
-        id
+        !document.hidden &&
+        monitoredQueueId
       ) {
-        return;
-      }
 
-      if (
-        Date.now() -
-          lastPresenceSentAt >
-          5000
-      ) {
         sendPresenceNow(
           true
         );
+
+        checkMyStatus();
       }
-
-    },
-    700
-  );
-}
-
-document.addEventListener(
-  "visibilitychange",
-  () => {
-
-    if (
-      !document.hidden
-    ) {
-      atualizarAoAbrirApp();
     }
-  }
-);
+  );
 
-window.addEventListener(
-  "focus",
-  () => {
-    atualizarAoAbrirApp();
-  }
-);
+window
+  .addEventListener(
+    "focus",
+    () => {
 
-window.addEventListener(
-  "pageshow",
-  () => {
-    atualizarAoAbrirApp();
-  }
-);
+      if (
+        monitoredQueueId
+      ) {
+
+        sendPresenceNow(
+          true
+        );
+
+        checkMyStatus();
+      }
+    }
+  );
 
 $("loginBtn").onclick =
   async () => {
@@ -2471,8 +2227,8 @@ $("loginBtn").onclick =
               JSON.stringify({
                 password:
                   $("adminPassword")
-                    .value
-              })
+                    .value,
+              }),
           }
         );
 
@@ -2490,7 +2246,9 @@ $("loginBtn").onclick =
 
       openAdmin();
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       msg(
         "loginMessage",
@@ -2519,7 +2277,7 @@ async function openAdmin() {
 
     await Promise.all([
       loadSettings(),
-      loadQueue()
+      loadQueue(),
     ]);
 
     makeQr();
@@ -2534,7 +2292,9 @@ async function openAdmin() {
         5000
       );
 
-  } catch (error) {
+  } catch (
+    error
+  ) {
 
     $("loginBox")
       .classList
@@ -2564,39 +2324,27 @@ async function loadSettings() {
       "/api/admin/settings",
       {
         admin:
-          true
+          true,
       }
     );
 
-  $("unitName")
-    .value =
-    settings
-      .unit_name;
+  $("unitName").value =
+    settings.unit_name;
 
-  $("configCode")
-    .value =
-    settings
-      .daily_code;
+  $("configCode").value =
+    settings.daily_code;
 
-  $("unitLat")
-    .value =
-    settings
-      .latitude;
+  $("unitLat").value =
+    settings.latitude;
 
-  $("unitLon")
-    .value =
-    settings
-      .longitude;
+  $("unitLon").value =
+    settings.longitude;
 
-  $("radiusM")
-    .value =
-    settings
-      .radius_m;
+  $("radiusM").value =
+    settings.radius_m;
 
-  $("blockDevice")
-    .checked =
-    settings
-      .block_device;
+  $("blockDevice").checked =
+    settings.block_device;
 }
 
 $("saveSettingsBtn").onclick =
@@ -2643,8 +2391,8 @@ $("saveSettingsBtn").onclick =
 
               blockDevice:
                 $("blockDevice")
-                  .checked
-            })
+                  .checked,
+            }),
         }
       );
 
@@ -2657,7 +2405,9 @@ $("saveSettingsBtn").onclick =
 
       loadPublic();
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       msg(
         "settingsMessage",
@@ -2681,7 +2431,7 @@ $("newCodeBtn").onclick =
               "POST",
 
             admin:
-              true
+              true,
           }
         );
 
@@ -2696,7 +2446,9 @@ $("newCodeBtn").onclick =
         `Novo código: ${data.dailyCode}`
       );
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       msg(
         "settingsMessage",
@@ -2723,16 +2475,16 @@ $("useUnitLocationBtn").onclick =
     navigator.geolocation
       .getCurrentPosition(
 
-        (position) => {
+        (
+          position
+        ) => {
 
-          $("unitLat")
-            .value =
+          $("unitLat").value =
             position
               .coords
               .latitude;
 
-          $("unitLon")
-            .value =
+          $("unitLon").value =
             position
               .coords
               .longitude;
@@ -2745,7 +2497,9 @@ $("useUnitLocationBtn").onclick =
           );
         },
 
-        (error) => {
+        (
+          error
+        ) => {
 
           msg(
             "settingsMessage",
@@ -2760,20 +2514,11 @@ $("useUnitLocationBtn").onclick =
             true,
 
           timeout:
-            15000
+            15000,
         }
       );
   };
 
-/*
- * =========================================================
- * PAINEL ADMINISTRATIVO V15.2
- *
- * A coluna "Fila" conta somente AGUARDANDO.
- *
- * CHAMADO / BALANÇA / FINALIZADO aparecem com —
- * =========================================================
- */
 async function loadQueue() {
 
   try {
@@ -2783,16 +2528,18 @@ async function loadQueue() {
         "/api/admin/queue",
         {
           admin:
-            true
+            true,
         }
       );
 
     queueCache =
       new Map(
         rows.map(
-          (row) => [
-            row.id,
+          (
             row
+          ) => [
+            row.id,
+            row,
           ]
         )
       );
@@ -2803,42 +2550,46 @@ async function loadQueue() {
     body.innerHTML =
       "";
 
-    let waitingNumber =
+    let activeNumber =
       0;
 
     rows.forEach(
-      (row) => {
-
-        let number =
-          "—";
+      (
+        row
+      ) => {
 
         if (
-          row.status ===
-            "aguardando"
+          row.status !==
+          "finalizado"
         ) {
-          waitingNumber +=
+          activeNumber +=
             1;
-
-          number =
-            String(
-              waitingNumber
-            ).padStart(
-              2,
-              "0"
-            );
         }
+
+        const number =
+          row.status ===
+            "finalizado"
+            ? "—"
+            : String(
+                activeNumber
+              )
+                .padStart(
+                  2,
+                  "0"
+                );
 
         let callButton =
           "";
 
         if (
           row.status ===
-            "aguardando"
+          "aguardando"
         ) {
 
           const warning =
             row.presence &&
-            !row.presence
+            !row
+              .presence
               .canCall;
 
           callButton = `
@@ -2856,7 +2607,7 @@ async function loadQueue() {
 
         } else if (
           row.status ===
-            "chamado"
+          "chamado"
         ) {
 
           callButton = `
@@ -2883,31 +2634,27 @@ async function loadQueue() {
         const scaleButton =
           row.status !==
             "finalizado"
-
             ? `
-              <button
-                class="btn success small"
-                onclick="setStatus('${row.id}', 'balanca')"
-              >
-                ⚖️ Balança
-              </button>
-            `
-
+                <button
+                  class="btn success small"
+                  onclick="setStatus('${row.id}', 'balanca')"
+                >
+                  ⚖️ Balança
+                </button>
+              `
             : "";
 
         const finishButton =
           row.status !==
             "finalizado"
-
             ? `
-              <button
-                class="btn secondary small"
-                onclick="setStatus('${row.id}', 'finalizado')"
-              >
-                ✔ Finalizar
-              </button>
-            `
-
+                <button
+                  class="btn secondary small"
+                  onclick="setStatus('${row.id}', 'finalizado')"
+                >
+                  ✔ Finalizar
+                </button>
+              `
             : "";
 
         const deleteButton = `
@@ -2932,7 +2679,6 @@ async function loadQueue() {
               </td>
 
               <td>
-
                 <b>
                   ${esc(
                     row.plate
@@ -2942,15 +2688,14 @@ async function loadQueue() {
                 ${
                   row.manual
                     ? `
-                      <br>
+                        <br>
 
-                      <span class="pill p-manual">
-                        Manual
-                      </span>
-                    `
+                        <span class="pill p-manual">
+                          Manual
+                        </span>
+                      `
                     : ""
                 }
-
               </td>
 
               <td>
@@ -2975,9 +2720,7 @@ async function loadQueue() {
                 ${
                   row.distance_m ==
                     null
-
                     ? "—"
-
                     : `${row.distance_m} m`
                 }
               </td>
@@ -2997,10 +2740,12 @@ async function loadQueue() {
               <td>
 
                 <div class="row-actions">
+
                   ${callButton}
                   ${scaleButton}
                   ${finishButton}
                   ${deleteButton}
+
                 </div>
 
               </td>
@@ -3011,19 +2756,22 @@ async function loadQueue() {
       }
     );
 
-    if (!rows.length) {
+    if (
+      !rows.length
+    ) {
 
       body.innerHTML = `
         <tr>
-
           <td
             colspan="9"
-            style="text-align:center;padding:28px"
+            style="
+              text-align:center;
+              padding:28px
+            "
             class="help"
           >
             Nenhum caminhão registrado.
           </td>
-
         </tr>
       `;
     }
@@ -3031,38 +2779,50 @@ async function loadQueue() {
     $("sumWait")
       .textContent =
       rows.filter(
-        (row) =>
+        (
+          row
+        ) =>
           row.status ===
-            "aguardando"
+          "aguardando"
       ).length;
 
     $("sumCall")
       .textContent =
       rows.filter(
-        (row) =>
+        (
+          row
+        ) =>
           row.status ===
-            "chamado"
+          "chamado"
       ).length;
 
     $("sumScale")
       .textContent =
       rows.filter(
-        (row) =>
+        (
+          row
+        ) =>
           row.status ===
-            "balanca"
+          "balanca"
       ).length;
 
     $("sumDone")
       .textContent =
       rows.filter(
-        (row) =>
+        (
+          row
+        ) =>
           row.status ===
-            "finalizado"
+          "finalizado"
       ).length;
 
-  } catch (error) {
+  } catch (
+    error
+  ) {
 
-    if (!adminToken) {
+    if (
+      !adminToken
+    ) {
       openAdmin();
     }
   }
@@ -3076,7 +2836,9 @@ window.callDriver =
 
     if (
       chamadasEmAndamento
-        .has(id)
+        .has(
+          id
+        )
     ) {
       return;
     }
@@ -3087,6 +2849,7 @@ window.callDriver =
       );
 
     if (!row) {
+
       alert(
         "Não foi possível localizar os dados do motorista."
       );
@@ -3096,8 +2859,9 @@ window.callDriver =
 
     if (
       row.status !==
-        "aguardando"
+      "aguardando"
     ) {
+
       alert(
         "Este motorista já foi chamado ou não está mais aguardando."
       );
@@ -3108,10 +2872,13 @@ window.callDriver =
     }
 
     chamadasEmAndamento
-      .add(id);
+      .add(
+        id
+      );
 
     const originalText =
-      button?.innerHTML ||
+      button
+        ?.innerHTML ||
       "📢 Chamar";
 
     if (button) {
@@ -3129,10 +2896,14 @@ window.callDriver =
         "FILA_CARREGAMENTO_WHATSAPP"
       );
 
-    if (!whatsappWindow) {
+    if (
+      !whatsappWindow
+    ) {
 
       chamadasEmAndamento
-        .delete(id);
+        .delete(
+          id
+        );
 
       if (button) {
 
@@ -3153,14 +2924,10 @@ window.callDriver =
     const group =
       "FILA CARREGAMENTO AGREX SAMBAIBA";
 
-    /*
-     * WHATSAPP MANTIDO EXATAMENTE.
-     */
     const message =
       `*Placa:* ${row.plate}\n\n⚖️ *Dirija-se até a balança.*`;
 
     const task = {
-
       origem:
         "FILA_CARREGAMENTO_V13",
 
@@ -3176,7 +2943,7 @@ window.callDriver =
         message,
 
       criadoEm:
-        Date.now()
+        Date.now(),
     };
 
     let statusChanged =
@@ -3185,13 +2952,11 @@ window.callDriver =
     try {
 
       try {
-
         await navigator
           .clipboard
           .writeText(
             message
           );
-
       } catch {}
 
       try {
@@ -3208,16 +2973,19 @@ window.callDriver =
             body:
               JSON.stringify({
                 status:
-                  "chamado"
-              })
+                  "chamado",
+              }),
           }
         );
 
-      } catch (error) {
+      } catch (
+        error
+      ) {
 
         if (
-          error.data?.code !==
-            "PRESENCE_BLOCKED"
+          error.data
+            ?.code !==
+          "PRESENCE_BLOCKED"
         ) {
           throw error;
         }
@@ -3227,7 +2995,9 @@ window.callDriver =
             `${error.message}\n\nDeseja chamar mesmo assim?`
           );
 
-        if (!callAnyway) {
+        if (
+          !callAnyway
+        ) {
 
           if (button) {
 
@@ -3258,8 +3028,8 @@ window.callDriver =
                   "chamado",
 
                 forcePresence:
-                  true
-              })
+                  true,
+              }),
           }
         );
       }
@@ -3282,27 +3052,28 @@ window.callDriver =
         "";
 
       for (
-        const byte of bytes
+        const byte
+        of bytes
       ) {
         binary +=
-          String.fromCharCode(
-            byte
-          );
+          String
+            .fromCharCode(
+              byte
+            );
       }
 
       const payload =
-        btoa(binary)
-
+        btoa(
+          binary
+        )
           .replace(
             /\+/g,
             "-"
           )
-
           .replace(
             /\//g,
             "_"
           )
-
           .replace(
             /=+$/,
             ""
@@ -3314,17 +3085,15 @@ window.callDriver =
         `https://web.whatsapp.com/#fila=${payload}`;
 
       try {
-        whatsappWindow.focus();
+        whatsappWindow
+          .focus();
       } catch {}
 
-      /*
-       * Assim que status vira CHAMADO,
-       * a fila administrativa também
-       * recalcula a numeração.
-       */
       await loadQueue();
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       if (
         statusChanged
@@ -3344,8 +3113,8 @@ window.callDriver =
               body:
                 JSON.stringify({
                   status:
-                    "aguardando"
-                })
+                    "aguardando",
+                }),
             }
           );
 
@@ -3370,7 +3139,9 @@ window.callDriver =
     } finally {
 
       chamadasEmAndamento
-        .delete(id);
+        .delete(
+          id
+        );
     }
   };
 
@@ -3393,14 +3164,16 @@ window.setStatus =
 
           body:
             JSON.stringify({
-              status
-            })
+              status,
+            }),
         }
       );
 
       loadQueue();
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       alert(
         error.message
@@ -3409,7 +3182,9 @@ window.setStatus =
   };
 
 window.removeEntry =
-  async (id) => {
+  async (
+    id
+  ) => {
 
     if (
       !confirm(
@@ -3428,13 +3203,15 @@ window.removeEntry =
             "DELETE",
 
           admin:
-            true
+            true,
         }
       );
 
       loadQueue();
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       alert(
         error.message
@@ -3442,16 +3219,19 @@ window.removeEntry =
     }
   };
 
-$("refreshBtn").onclick =
+$("refreshBtn")
+  .onclick =
   loadQueue;
 
-$("clearFinishedBtn").onclick =
+$("clearFinishedBtn")
+  .onclick =
   () =>
     clearQueue(
       "finished"
     );
 
-$("clearAllBtn").onclick =
+$("clearAllBtn")
+  .onclick =
   () =>
     clearQueue(
       "all"
@@ -3463,10 +3243,9 @@ async function clearQueue(
 
   if (
     !confirm(
-      scope === "all"
-
+      scope ===
+        "all"
         ? "Apagar toda a fila?"
-
         : "Apagar somente os finalizados?"
     )
   ) {
@@ -3482,13 +3261,15 @@ async function clearQueue(
           "DELETE",
 
         admin:
-          true
+          true,
       }
     );
 
     loadQueue();
 
-  } catch (error) {
+  } catch (
+    error
+  ) {
 
     alert(
       error.message
@@ -3524,21 +3305,18 @@ $("manualBtn").onclick =
 
               carrier:
                 $("manualCarrier")
-                  .value
-            })
+                  .value,
+            }),
         }
       );
 
-      $("manualPlate")
-        .value =
+      $("manualPlate").value =
         "";
 
-      $("manualDriver")
-        .value =
+      $("manualDriver").value =
         "";
 
-      $("manualCarrier")
-        .value =
+      $("manualCarrier").value =
         "";
 
       msg(
@@ -3549,7 +3327,9 @@ $("manualBtn").onclick =
 
       loadQueue();
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       msg(
         "manualMessage",
@@ -3588,7 +3368,7 @@ function makeQr() {
         correctLevel:
           QRCode
             .CorrectLevel
-            .H
+            .H,
       }
     );
 
@@ -3625,20 +3405,18 @@ $("printQrBtn").onclick =
             </title>
 
             <style>
-
               body {
-                text-align: center;
-                font-family: Arial;
-                padding: 40px;
+                text-align:center;
+                font-family:Arial;
+                padding:40px;
               }
 
               .box {
-                display: inline-block;
-                border: 4px solid #111;
-                border-radius: 18px;
-                padding: 30px;
+                display:inline-block;
+                border:4px solid #111;
+                border-radius:18px;
+                padding:30px;
               }
-
             </style>
 
           </head>
@@ -3660,7 +3438,10 @@ $("printQrBtn").onclick =
               </p>
 
               <div
-                style="display:flex;justify-content:center"
+                style="
+                  display:flex;
+                  justify-content:center
+                "
               >
                 ${qr}
               </div>
@@ -3675,7 +3456,8 @@ $("printQrBtn").onclick =
 
             <script>
               setTimeout(
-                () => print(),
+                () =>
+                  print(),
                 500
               )
             <\/script>
@@ -3710,7 +3492,8 @@ function dispositivoIOS() {
 
   return /iphone|ipad|ipod/i
     .test(
-      navigator.userAgent
+      navigator
+        .userAgent
     );
 }
 
@@ -3743,36 +3526,40 @@ function atualizarBotaoInstalacao() {
   }
 }
 
-window.addEventListener(
-  "beforeinstallprompt",
-  (event) => {
+window
+  .addEventListener(
+    "beforeinstallprompt",
+    (
+      event
+    ) => {
 
-    event.preventDefault();
+      event.preventDefault();
 
-    installPromptEvent =
-      event;
+      installPromptEvent =
+        event;
 
-    atualizarBotaoInstalacao();
-  }
-);
+      atualizarBotaoInstalacao();
+    }
+  );
 
-window.addEventListener(
-  "appinstalled",
-  () => {
+window
+  .addEventListener(
+    "appinstalled",
+    () => {
 
-    installPromptEvent =
-      null;
+      installPromptEvent =
+        null;
 
-    msg(
-      "installAppMessage",
-      "ok",
-      "Aplicativo instalado",
-      "Nas próximas chegadas, abra pelo ícone Fila AGREX na tela inicial."
-    );
+      msg(
+        "installAppMessage",
+        "ok",
+        "Aplicativo instalado",
+        "Nas próximas chegadas, abra pelo ícone Fila AGREX na tela inicial."
+      );
 
-    atualizarBotaoInstalacao();
-  }
-);
+      atualizarBotaoInstalacao();
+    }
+  );
 
 $("installAppBtn").onclick =
   async () => {
@@ -3801,14 +3588,16 @@ $("installAppBtn").onclick =
       installPromptEvent =
         null;
 
-      await event.prompt();
+      await event
+        .prompt();
 
       const choice =
-        await event.userChoice;
+        await event
+          .userChoice;
 
       if (
         choice.outcome ===
-          "accepted"
+        "accepted"
       ) {
 
         msg(
@@ -3856,36 +3645,40 @@ $("installAppBtn").onclick =
   };
 
 if (
-  "serviceWorker" in
-  navigator
+  "serviceWorker"
+  in navigator
 ) {
 
-  window.addEventListener(
-    "load",
-    () => {
+  window
+    .addEventListener(
+      "load",
+      () => {
 
-      navigator
-        .serviceWorker
-        .register(
-          "/service-worker.js"
-        )
-
-        .then(
-          (registration) =>
-            registration.update()
-        )
-
-        .catch(
-          (error) => {
-
-            console.error(
-              "Não foi possível registrar o PWA:",
+        navigator
+          .serviceWorker
+          .register(
+            "/service-worker.js"
+          )
+          .then(
+            (
+              registration
+            ) =>
+              registration
+                .update()
+          )
+          .catch(
+            (
               error
-            );
-          }
-        );
-    }
-  );
+            ) => {
+
+              console.error(
+                "Não foi possível registrar o PWA:",
+                error
+              );
+            }
+          );
+      }
+    );
 }
 
 atualizarBotaoInstalacao();
@@ -3897,21 +3690,15 @@ const lastId =
     "fila_last_id"
   );
 
-/*
- * Recupera cadastro, posição, placas
- * à frente e localização ao abrir.
- */
-if (lastId) {
-
-  setTimeout(
-    () => {
-      atualizarAoAbrirApp();
-    },
-    300
-  );
+if (
+  lastId
+) {
+  checkMyStatus();
 }
 
-if (adminToken) {
+if (
+  adminToken
+) {
 
   $("loginBox")
     .classList
@@ -3925,7 +3712,7 @@ if (adminToken) {
       "hidden"
     );
 }
-</script>
 
+</script>
 </body>
 </html>
